@@ -48,7 +48,7 @@ type WorkspaceKanbanLaneGridProps = {
     worktree: Worktree
   ) => readonly Worktree[]
   onAssignWorkspaceStatus?: (worktreeIds: readonly string[], status: WorkspaceStatus) => void
-  onCreateWorktree: (statusId: string) => void
+  onCreateWorktree?: (statusId: string) => void
   onColumnResizeStart: (event: React.PointerEvent<HTMLElement>) => void
   onColumnResizeKeyDown: (event: React.KeyboardEvent<HTMLElement>) => void
 }

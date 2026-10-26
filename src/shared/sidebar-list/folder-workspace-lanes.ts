@@ -2,6 +2,7 @@ import type { FolderWorkspace } from '../folder-workspace-types'
 import type { ProjectGroup } from '../project-group-types'
 import type { WorkspaceStatusDefinition } from '../worktree/types'
 import { getWorkspaceStatus, getWorkspaceStatusGroupKey } from '../workspace-statuses'
+import { getWorkspacePriority, getWorkspacePriorityGroupKey } from '../workspace-priority'
 import { ALL_GROUP_KEY, getPRLaneKey } from './group-keys'
 import { compareCodePoints, compareSidebarText } from './text-order'
 import type { WorktreeGroupBy } from './row-types'
@@ -53,6 +54,8 @@ export function getFolderWorkspaceLaneKey(
   switch (groupBy) {
     case 'workspace-status':
       return getWorkspaceStatusGroupKey(getWorkspaceStatus(pair.folderWorkspace, workspaceStatuses))
+    case 'priority':
+      return getWorkspacePriorityGroupKey(getWorkspacePriority(pair.folderWorkspace))
     case 'pr-status':
       // Why in-progress: a folder workspace has no branch or repo, so it can
       // never resolve a PR. The window's PR reader returns this same lane for any

@@ -25,6 +25,10 @@ import type {
   WorkspaceSortBy
 } from '../../../src/shared/workspace-view/workspace-view-options'
 import { hostSortsByStamps, sortWorktrees } from './workspace-list-ordering'
+import {
+  getWorkspacePriorityEnglishLabel,
+  groupRowsByWorkspacePriority
+} from '../../../src/shared/workspace-priority'
 import { getWorktreeRowIdentity } from './worktree-host-row-identity'
 import { resolveWorktreeHostId } from './worktree-host-context-labels'
 import type { ExecutionHostId } from '../../../src/shared/execution-host'
@@ -265,6 +269,12 @@ export function buildMobileWorkspacePlan(
           if (items && items.length > 0) {
             sections.push(makeSection(getWorkspaceStatusGroupKey(status.id), status.label, items))
           }
+        }
+      } else if (groupMode === 'priority') {
+        for (const lane of groupRowsByWorkspacePriority(canonicalGroupWorktrees)) {
+          sections.push(
+            makeSection(lane.key, getWorkspacePriorityEnglishLabel(lane.priority), lane.rows)
+          )
         }
       } else if (groupMode === 'pr-status') {
         const byGroup = new Map<string, Worktree[]>()

@@ -6,6 +6,7 @@ import { isWorkspaceLinkedItemSourceContextMatch } from '../workspace-linked-ite
 import { isTuiAgent } from '../tui-agent-config'
 import { OptionalFiniteNumber, OptionalString, requiredString } from './rpc-param-primitives'
 import { DiffCommentSchema } from '../diff-comment-schema'
+import { WorkspacePriorityUpdateSchema } from '../workspace-priority-schema'
 
 export const FolderWorkspaceLinkedTask = WorkspaceLinkedItemSchema.nullable()
 
@@ -61,6 +62,7 @@ export const FolderWorkspaceUpdate = z.object({
       sortOrder: OptionalFiniteNumber,
       manualOrder: OptionalFiniteNumber,
       workspaceStatus: OptionalString,
+      priority: WorkspacePriorityUpdateSchema,
       createdWithAgent: z.string().refine(isTuiAgent).optional(),
       pendingFirstAgentMessageRename: z.boolean().optional(),
       firstAgentMessageRenameError: z.string().nullable().optional(),

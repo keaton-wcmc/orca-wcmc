@@ -37,6 +37,23 @@ describe('stamp order', () => {
     expect(recentStamp({ lastActivityAt: Number.POSITIVE_INFINITY })).toBe(0)
   })
 
+  it('triages by priority within a tier, never across one, and sinks Low below untriaged', () => {
+    // A newer host's priority level, parsed off the wire as this client receives it.
+    const unknownPriority: StampOrderRow = JSON.parse(
+      '{"lastActivityAt":700,"priority":"critical"}'
+    )
+    expect(
+      sortSmart({
+        restLow: { lastActivityAt: 900, priority: 'low' },
+        restUrgent: { lastActivityAt: 1, priority: 'urgent' },
+        restUntriaged: { lastActivityAt: 800 },
+        restUnknown: unknownPriority,
+        needsYou: { lastActivityAt: 1, smartTier: 'needs-you', smartAt: 9 },
+        needsYouHigh: { lastActivityAt: 1, smartTier: 'needs-you', smartAt: 1, priority: 'high' }
+      })
+    ).toEqual(['needsYouHigh', 'needsYou', 'restUrgent', 'restUntriaged', 'restUnknown', 'restLow'])
+  })
+
   it('ties within a tier fall to Recent', () => {
     expect(
       sortSmart({

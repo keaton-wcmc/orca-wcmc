@@ -9,6 +9,7 @@ import { NODE_PLATFORM_NAMES } from '../transport/mobile-runtime-host-platform'
 export const WORKSPACE_GROUP_BY_ARMS = hostUnionArms<PersistedUIState['groupBy']>({
   none: true,
   'workspace-status': true,
+  priority: true,
   repo: true,
   'pr-status': true
 })

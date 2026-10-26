@@ -63,6 +63,7 @@ import {
 } from './ui-slice-hydration-sanitizers'
 import { hydrateAgentReadState, sanitizeTaskResumeState } from './ui-slice-hydration-values'
 import { hydrateStatusBarItems } from './ui-slice-hydration-status-bar-items'
+import { normalizeWorkspaceBoardColumns } from '../../../../../shared/workspace-board-columns'
 
 const MAX_LEFT_SIDEBAR_WIDTH = 500
 const MAX_RIGHT_SIDEBAR_WIDTH = 4000
@@ -171,6 +172,7 @@ export function createUiHydrationActions(set: UISliceSet, _get: UISliceGet): Par
           workspaceStatuses: normalizeWorkspaceStatuses(ui.workspaceStatuses),
           workspaceBoardOpacity: clampWorkspaceBoardOpacity(ui.workspaceBoardOpacity),
           workspaceBoardColumnWidth: clampWorkspaceBoardColumnWidth(ui.workspaceBoardColumnWidth),
+          workspaceBoardColumns: normalizeWorkspaceBoardColumns(ui.workspaceBoardColumns),
           syncTaskStatusFromWorkspaceBoard: ui.syncTaskStatusFromWorkspaceBoard === true,
           statusBarItems: statusBarItemsWithGrok,
           statusBarVisible: ui.statusBarVisible ?? true,

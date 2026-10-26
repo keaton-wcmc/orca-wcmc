@@ -40,6 +40,9 @@ export const WORKTREE_VISIBILITY_SOURCE_DEFAULTS_RUNTIME_CAPABILITY =
 // would re-show that row as a normal workspace, so the host leaves such rows out of its listings.
 export const WORKTREE_BACKGROUND_REMOVAL_RUNTIME_CAPABILITY =
   'worktree.background-removal.v1' as const
+// Why: worktree.set and folderWorkspace.update parse in strip mode, so an older host would drop a
+// priority write and report success.
+export const WORKTREE_PRIORITY_RUNTIME_CAPABILITY = 'worktree.priority.v1' as const
 
 export const WORKTREE_RUNTIME_CAPABILITIES = [
   PROJECT_HOST_SETUP_RUNTIME_CAPABILITY,
@@ -54,5 +57,6 @@ export const WORKTREE_RUNTIME_CAPABILITIES = [
   WORKTREE_CREATE_IDEMPOTENCY_RUNTIME_CAPABILITY,
   WORKTREE_ARCHIVE_FAILURE_BLOCKING_RUNTIME_CAPABILITY,
   WORKTREE_VISIBILITY_DEFAULTS_RUNTIME_CAPABILITY,
-  WORKTREE_VISIBILITY_SOURCE_DEFAULTS_RUNTIME_CAPABILITY
+  WORKTREE_VISIBILITY_SOURCE_DEFAULTS_RUNTIME_CAPABILITY,
+  WORKTREE_PRIORITY_RUNTIME_CAPABILITY
 ] as const

@@ -235,6 +235,7 @@ export function getDefaultUIState(): PersistedUIState {
     workspaceStatuses: cloneDefaultWorkspaceStatuses(),
     workspaceBoardOpacity: 1,
     workspaceBoardColumnWidth: 308,
+    workspaceBoardColumns: 'status',
     syncTaskStatusFromWorkspaceBoard: false,
     _workspaceStatusesDefaultOrderMigrated: true,
     _workspaceStatusesReorderedDefaultRepaired: true,

@@ -53,6 +53,7 @@ export const GROUP_BY_OPTIONS = localizeChoices<ChoiceId<typeof WORKSPACE_GROUP_
     none: () => translate('auto.components.sidebar.SidebarWorkspaceOptionsMenu.c2c7a45cda', 'None'),
     'workspace-status': () =>
       translate('auto.components.sidebar.SidebarWorkspaceOptionsMenu.e029a2d775', 'Status'),
+    priority: () => translate('auto.components.TaskPage.c8d5bec5f7', 'Priority'),
     'pr-status': () =>
       translate('auto.components.sidebar.SidebarWorkspaceOptionsMenu.0f9b959b31', 'PR'),
     repo: projectLabel

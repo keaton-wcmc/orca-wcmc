@@ -16,6 +16,7 @@ import { findRepoRowForHostScopedWrite } from '../tracking-repos/repo-update-ope
 import type { WorkspaceAttachmentMutation } from '../../../shared/workspace-attachment-mutation'
 import { normalizeWorkspaceAttachmentUpdate } from '../../../shared/workspace-attachments'
 import { ORCA_SIDEBAR_INPUTS_IS_MAIN } from '../../../shared/sidebar-inputs-switch'
+import { storeWorkspacePriority } from '../../../shared/workspace-priority'
 
 export type FolderWorkspaceMutationOperations = {
   state: PersistedState
@@ -142,6 +143,7 @@ export class FolderWorkspacePersistenceOperations {
         | 'sortOrder'
         | 'manualOrder'
         | 'workspaceStatus'
+        | 'priority'
         | 'createdWithAgent'
         | 'pendingFirstAgentMessageRename'
         | 'firstAgentMessageRenameError'
@@ -238,6 +240,9 @@ export class FolderWorkspacePersistenceOperations {
     }
     if (updates.workspaceStatus !== undefined) {
       workspace.workspaceStatus = updates.workspaceStatus
+    }
+    if (updates.priority !== undefined) {
+      storeWorkspacePriority(workspace, updates.priority)
     }
     if (updates.createdWithAgent !== undefined) {
       workspace.createdWithAgent = updates.createdWithAgent

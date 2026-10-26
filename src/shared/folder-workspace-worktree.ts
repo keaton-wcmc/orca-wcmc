@@ -10,6 +10,7 @@ import { composeWorktreeHostIdentity } from './worktree/host-qualified-identity'
 import { normalizeWorkspaceCreatorProvenance } from './workspace-creator-provenance'
 import { getWorkspaceAttachments } from './workspace-attachments'
 import { normalizeWorkspaceAttachment } from './workspace-attachment-normalization'
+import { workspacePriorityField } from './workspace-priority'
 
 /**
  * A folder workspace has no git repo, so its synthetic `Worktree` borrows the `repoId` slot to
@@ -107,6 +108,7 @@ export function folderWorkspaceToWorktree(folderWorkspace: FolderWorkspace): Wor
     pendingFirstAgentMessageRename: folderWorkspace.pendingFirstAgentMessageRename,
     firstAgentMessageRenameError: folderWorkspace.firstAgentMessageRenameError,
     workspaceStatus: folderWorkspace.workspaceStatus,
+    ...workspacePriorityField(folderWorkspace),
     diffComments: folderWorkspace.diffComments,
     path: folderWorkspace.folderPath,
     head: '',

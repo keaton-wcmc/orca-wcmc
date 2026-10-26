@@ -43,6 +43,10 @@ import {
 } from './worktree-create-parent-selector'
 import { getOptionalLinearIssueLinkFlag } from './worktree-linear-issue-link'
 import { getOptionalWorktreeUnreadFlag } from './worktree-unread-flag'
+import {
+  assertWorktreePrioritySupported,
+  getOptionalWorktreePriorityFlag
+} from './worktree-priority-flag'
 import { getReviewTargetLinkFlags } from './worktree-review-link-flags'
 import { withSetupDecisionRecovery } from './worktree-setup-decision-recovery'
 import { assertGitLabLinkFlagProjectsMatch } from './worktree-gitlab-link-context'
@@ -229,12 +233,14 @@ export const WORKTREE_HANDLERS: Record<string, CommandHandler> = {
       'Choose either --parent-worktree or --no-parent, not both.'
     )
     const isUnread = getOptionalWorktreeUnreadFlag(flags)
+    const priority = getOptionalWorktreePriorityFlag(flags)
     const reviewLinks = getReviewTargetLinkFlags(flags, { nullable: true })
     const linearIssueLink = getOptionalLinearIssueLinkFlag(flags, 'linear-issue', {
       allowNull: true
     })
     const worktree = await getRequiredWorktreeSelector(flags, 'worktree', cwd, client)
     await assertGitLabLinkFlagProjectsMatch(flags, client, { worktree })
+    await assertWorktreePrioritySupported(client, priority)
     const result = await client.call<RuntimeWorktreeSetResult>('worktree.set', {
       worktree,
       displayName: getOptionalStringFlag(flags, 'display-name'),
@@ -242,6 +248,7 @@ export const WORKTREE_HANDLERS: Record<string, CommandHandler> = {
       ...linearIssueLink,
       comment: getOptionalStringFlag(flags, 'comment'),
       workspaceStatus: getOptionalStringFlag(flags, 'workspace-status'),
+      priority,
       isUnread,
       parentWorktree: await getOptionalWorktreeSelector(flags, 'parent-worktree', cwd, client),
       noParent: flags.get('no-parent') === true

@@ -83,7 +83,13 @@ function folderRows(rows: Row[]): Extract<Row, { type: 'folder-workspace' }>[] {
   )
 }
 
-const ALL_GROUP_BY: WorktreeGroupBy[] = ['repo', 'workspace-status', 'pr-status', 'none']
+const ALL_GROUP_BY: WorktreeGroupBy[] = [
+  'repo',
+  'workspace-status',
+  'priority',
+  'pr-status',
+  'none'
+]
 
 describe('folder workspaces render under every Group by mode', () => {
   // The three non-repo arms are the acceptance evidence; the repo arm is a
@@ -131,6 +137,39 @@ describe('a folder workspace can be the only member of a lane', () => {
     // so a folder-only account saw nothing at all.
     const rows = buildSidebarRows({ groupBy: 'none', worktrees: [] })
     expect(folderRows(rows)).toHaveLength(1)
+  })
+})
+
+describe('Group by Priority', () => {
+  it('orders lanes most urgent first and untriaged last, seating a folder workspace in its own', () => {
+    const rows = buildSidebarRows({
+      groupBy: 'priority',
+      worktrees: [
+        { ...worktree, id: 'wt-low', path: '/tmp/low', priority: 'low' },
+        { ...worktree, id: 'wt-untriaged', path: '/tmp/untriaged' },
+        { ...worktree, id: 'wt-high', path: '/tmp/high', priority: 'high' }
+      ],
+      folderWorkspaces: [makeFolderWorkspace({ priority: 'urgent' })]
+    })
+    const sequence = rows.map((row) => {
+      if (row.type === 'header') {
+        return row.icon.kind === 'priority' ? `# ${row.icon.priority ?? 'none'}` : row.key
+      }
+      if (row.type === 'item') {
+        return row.worktree.id
+      }
+      return row.type === 'folder-workspace' ? row.folderWorkspace.id : row.type
+    })
+    expect(sequence).toEqual([
+      '# urgent',
+      'fw-1',
+      '# high',
+      'wt-high',
+      '# low',
+      'wt-low',
+      '# none',
+      'wt-untriaged'
+    ])
   })
 })
 
@@ -194,7 +233,7 @@ describe('membership is decided once, not per mode', () => {
     )
     // Parity with today's behaviour: nothing filters folder workspaces by
     // isArchived, so a mode must not be the thing that hides one.
-    expect(counts).toEqual([1, 1, 1, 1])
+    expect(counts).toEqual([1, 1, 1, 1, 1])
   })
 })
 

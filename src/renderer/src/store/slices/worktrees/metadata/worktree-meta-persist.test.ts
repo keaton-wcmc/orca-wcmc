@@ -6,6 +6,7 @@ import {
   WORKTREE_LINKED_ITEMS_DELTA_RUNTIME_CAPABILITY
 } from '../../../../../../shared/workspace-attachment-capabilities'
 import { persistWorktreeMeta } from './worktree-meta-persist'
+import { WORKTREE_PRIORITY_RUNTIME_CAPABILITY } from '../../../../../../shared/worktree-runtime-capabilities'
 import { normalizeWorkspaceAttachmentUpdate } from '../../../../../../shared/workspace-attachments'
 
 const mocks = vi.hoisted(() => ({
@@ -92,6 +93,21 @@ describe('persistWorktreeMeta GitHub PR suppression compatibility', () => {
       'env-1',
       WORKTREE_GITHUB_PR_SUPPRESSION_RUNTIME_CAPABILITY,
       'Update the remote runtime to unlink GitHub pull requests'
+    )
+    expect(mocks.callRuntimeRpc).not.toHaveBeenCalled()
+  })
+
+  it('refuses a priority clear an older host would drop, sending nothing', async () => {
+    mocks.assertCapability.mockRejectedValue(new Error('update required'))
+
+    await expect(
+      persistWorktreeMeta(mocks.target, 'repo::/feature', { priority: null })
+    ).rejects.toThrow('update required')
+
+    expect(mocks.assertCapability).toHaveBeenCalledWith(
+      'env-1',
+      WORKTREE_PRIORITY_RUNTIME_CAPABILITY,
+      'Update the remote runtime to set workspace priority'
     )
     expect(mocks.callRuntimeRpc).not.toHaveBeenCalled()
   })

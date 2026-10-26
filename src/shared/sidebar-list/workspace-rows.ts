@@ -11,6 +11,7 @@ import type { Repo } from '../repo-types'
 import { WorkspaceAttachmentsSchema } from '../workspace-attachment-schema'
 import { getWorkspaceAttachments } from '../workspace-attachments'
 import { DEFAULT_WORKSPACE_STATUS_ID } from '../workspace-statuses'
+import { WORKSPACE_PRIORITIES, workspacePriorityField } from '../workspace-priority'
 import {
   composeWorktreeHostIdentity,
   type HostScopedWorktreeKey
@@ -46,6 +47,8 @@ export const WorkspaceRowSchema = z.object({
   isArchived: z.boolean(),
   isUnread: z.boolean(),
   workspaceStatus: z.string(),
+  /** Absent when untriaged; a level this build does not know reads as untriaged. */
+  priority: z.enum(WORKSPACE_PRIORITIES).optional().catch(undefined),
   comment: z.string(),
   manualOrder: z.number().optional(),
   /** The saved order Manual falls back to where a row has no manualOrder; older hosts omit it. */
@@ -116,6 +119,7 @@ function toWorkspaceRow(
     isArchived: worktree.isArchived,
     isUnread: worktree.isUnread,
     workspaceStatus: worktree.workspaceStatus ?? DEFAULT_WORKSPACE_STATUS_ID,
+    ...workspacePriorityField(worktree),
     comment: worktree.comment,
     ...(worktree.manualOrder !== undefined ? { manualOrder: worktree.manualOrder } : {}),
     sortOrder: worktree.sortOrder,

@@ -6,6 +6,8 @@ import type { WorkspaceStatusDefinition } from '../../../../shared/worktree/type
 import SidebarFilter from './SidebarFilter'
 import WorkspaceKanbanSearchField from './WorkspaceKanbanSearchField'
 import WorkspaceKanbanSettingsMenu from './WorkspaceKanbanSettingsMenu'
+import { WorkspaceKanbanColumnsToggle } from './WorkspaceKanbanColumnsToggle'
+import type { WorkspaceBoardColumns } from '../../../../shared/workspace-board-columns'
 import { translate } from '@/i18n/i18n'
 
 type WorkspaceKanbanDrawerHeaderProps = {
@@ -17,6 +19,8 @@ type WorkspaceKanbanDrawerHeaderProps = {
   totalCount: number
   onQueryChange: (query: string) => void
   onClearQuery: () => void
+  columns: WorkspaceBoardColumns
+  onColumnsChange: (columns: WorkspaceBoardColumns) => void
   workspaceStatuses: readonly WorkspaceStatusDefinition[]
   syncTaskStatusFromWorkspaceBoard: boolean
   onSyncTaskStatusFromWorkspaceBoardChange: (enabled: boolean) => void
@@ -39,6 +43,8 @@ export default function WorkspaceKanbanDrawerHeader({
   totalCount,
   onQueryChange,
   onClearQuery,
+  columns,
+  onColumnsChange,
   workspaceStatuses,
   syncTaskStatusFromWorkspaceBoard,
   onSyncTaskStatusFromWorkspaceBoardChange,
@@ -74,6 +80,7 @@ export default function WorkspaceKanbanDrawerHeader({
               </span>
             ) : null}
           </SheetTitle>
+          <WorkspaceKanbanColumnsToggle columns={columns} onColumnsChange={onColumnsChange} />
           <WorkspaceKanbanSearchField
             query={query}
             isFiltering={isFiltering}

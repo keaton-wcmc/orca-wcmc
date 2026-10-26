@@ -23,8 +23,6 @@ import {
   WorktreeActivate,
   WorktreeForceDeleteBranch,
   WorktreeRemove,
-  WorktreeResolveMrBase,
-  WorktreeResolvePrBase,
   WorktreeSelector,
   WorktreeSet,
   WorktreeSortOrder,
@@ -35,6 +33,7 @@ import { WORKTREE_PROVISIONED_ROOT_METHOD } from './worktree-provisioned-root-me
 import { readsWorktreeRemovalMarker } from '../worktree-removal-marker-projection'
 import { queueWorkspaceDelete } from '../../workspaces/workspace-lifecycle-commands'
 import { WORKTREE_SLEEP_METHOD } from './worktree-sleep-method'
+import { WORKTREE_REVIEW_BASE_METHODS } from './worktree-review-base-methods'
 
 export const WORKTREE_METHODS = [
   ...WORKTREE_CATALOG_METHODS,
@@ -191,6 +190,7 @@ export const WORKTREE_METHODS = [
         sparsePresetId: params.sparsePresetId,
         baseRef: params.baseRef,
         workspaceStatus: params.workspaceStatus,
+        priority: params.priority,
         pushTarget: params.pushTarget,
         diffComments: params.diffComments,
         mobileDiffReview: params.mobileDiffReview,
@@ -216,32 +216,7 @@ export const WORKTREE_METHODS = [
     handler: async (params, { runtime }) =>
       runtime.persistManagedWorktreeSortOrder(params.orderedIds, params.hostIds)
   }),
-  defineMethod({
-    name: 'worktree.resolvePrBase',
-    permission: 'workspace',
-    params: WorktreeResolvePrBase,
-    handler: async (params, { runtime }) =>
-      runtime.resolveManagedPrBase({
-        repoSelector: params.repo,
-        prNumber: params.prNumber,
-        headRefName: params.headRefName,
-        baseRefName: params.baseRefName,
-        isCrossRepository: params.isCrossRepository
-      })
-  }),
-  defineMethod({
-    name: 'worktree.resolveMrBase',
-    permission: 'workspace',
-    params: WorktreeResolveMrBase,
-    handler: async (params, { runtime }) =>
-      runtime.resolveManagedMrBase({
-        repoSelector: params.repo,
-        mrIid: params.mrIid,
-        sourceBranch: params.sourceBranch,
-        targetBranch: params.targetBranch,
-        isCrossRepository: params.isCrossRepository
-      })
-  }),
+  ...WORKTREE_REVIEW_BASE_METHODS,
   defineMethod({
     name: 'worktree.rm',
     permission: 'workspace',

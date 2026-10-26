@@ -1,4 +1,5 @@
 import { DEFAULT_WORKSPACE_STATUS_ID } from '../../shared/workspace-statuses'
+import { workspacePriorityField } from '../../shared/workspace-priority'
 import type { Repo } from '../../shared/repo-types'
 import type { WorktreeMeta } from '../../shared/worktree/meta-types'
 import type { Worktree } from '../../shared/worktree/types'
@@ -74,6 +75,7 @@ export function mergeRuntimeFolderWorkspace(
     ...(meta.cliProvenance !== undefined ? { cliProvenance: meta.cliProvenance } : {}),
     ...(meta.priorWorktreeIds !== undefined ? { priorWorktreeIds: meta.priorWorktreeIds } : {}),
     workspaceStatus: meta.workspaceStatus ?? DEFAULT_WORKSPACE_STATUS_ID,
+    ...workspacePriorityField(meta),
     diffComments: meta.diffComments,
     mobileDiffReview: meta.mobileDiffReview
   }

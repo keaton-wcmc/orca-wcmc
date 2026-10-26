@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { Worktree } from '../../../../shared/worktree/types'
 import { groupWorkspaceKanbanWorktrees } from './workspace-kanban-worktree-groups'
 import { getWorktreeHostIdentity } from '../../../../shared/worktree/host-qualified-identity'
+import { getWorkspacePriorityGroupKey } from '../../../../shared/workspace-priority'
 
 function worktree({
   id,
@@ -68,6 +69,7 @@ describe('groupWorkspaceKanbanWorktrees', () => {
       worktrees,
       visibleWorktreeIds: visibleIdentities(worktrees),
       workspaceStatuses: statuses,
+      columns: 'status',
       sortBy: 'manual'
     })
 
@@ -97,6 +99,7 @@ describe('groupWorkspaceKanbanWorktrees', () => {
         worktrees,
         visibleWorktreeIds: visibleIdentities(worktrees),
         workspaceStatuses: statuses,
+        columns: 'status',
         sortBy: 'manual'
       })
     ).not.toThrow()
@@ -122,6 +125,7 @@ describe('groupWorkspaceKanbanWorktrees', () => {
         worktrees,
         visibleWorktreeIds: visibleIdentities(worktrees),
         workspaceStatuses: statuses,
+        columns: 'status',
         sortBy: 'recent'
       })
     ).not.toThrow()
@@ -148,10 +152,59 @@ describe('groupWorkspaceKanbanWorktrees', () => {
       worktrees,
       visibleWorktreeIds: visibleIdentities(worktrees),
       workspaceStatuses: statuses,
+      columns: 'status',
       sortBy: 'recent'
     })
 
     expect(grouped.get('doing')?.map((item) => item.id)).toEqual(['b', 'a'])
+  })
+
+  it('ranks priority between pin and recency, and lanes by priority under Priority columns', () => {
+    const worktrees = [
+      worktree({
+        id: 'recent',
+        displayName: 'Recent',
+        workspaceStatus: 'doing',
+        lastActivityAt: 90
+      }),
+      worktree({
+        id: 'low',
+        displayName: 'Low',
+        workspaceStatus: 'doing',
+        priority: 'low',
+        lastActivityAt: 99
+      }),
+      worktree({
+        id: 'urgent',
+        displayName: 'Urgent',
+        workspaceStatus: 'doing',
+        priority: 'urgent',
+        lastActivityAt: 1
+      }),
+      worktree({ id: 'pinned', displayName: 'Pinned', workspaceStatus: 'doing', isPinned: true })
+    ]
+    const group = (columns: 'status' | 'priority') =>
+      groupWorkspaceKanbanWorktrees({
+        worktrees,
+        visibleWorktreeIds: visibleIdentities(worktrees),
+        workspaceStatuses: statuses,
+        columns,
+        sortBy: 'recent'
+      })
+
+    expect(
+      group('status')
+        .get('doing')
+        ?.map((item) => item.id)
+    ).toEqual(['pinned', 'urgent', 'recent', 'low'])
+    const byPriority = group('priority')
+    expect([...byPriority.keys()]).toEqual(
+      (['urgent', 'high', 'medium', 'low', null] as const).map(getWorkspacePriorityGroupKey)
+    )
+    expect(byPriority.get(getWorkspacePriorityGroupKey(null))?.map((item) => item.id)).toEqual([
+      'pinned',
+      'recent'
+    ])
   })
 
   it('does not admit another host row that shares the visible workspace id', () => {
@@ -162,6 +215,7 @@ describe('groupWorkspaceKanbanWorktrees', () => {
       worktrees: [local, ssh],
       visibleWorktreeIds: visibleIdentities([local]),
       workspaceStatuses: statuses,
+      columns: 'status',
       sortBy: 'recent'
     })
 

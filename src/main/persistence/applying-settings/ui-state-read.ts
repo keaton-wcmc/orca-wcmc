@@ -14,6 +14,7 @@ import { normalizeUsagePercentageDisplay } from '../../../shared/usage-percentag
 import { normalizeStatusBarUsageMode } from '../../../shared/status-bar-usage-mode'
 import { clampMarkdownTocPanelWidth } from '../../../shared/markdown-toc-panel-width'
 import { clampCombinedDiffFileTreeWidth } from '../../../shared/combined-diff-file-tree-width'
+import { normalizeWorkspaceBoardColumns } from '../../../shared/workspace-board-columns'
 import {
   normalizeVisibleExecutionHostIds,
   normalizeExecutionHostOrder
@@ -55,6 +56,7 @@ export function getPersistedUI(
     workspaceStatuses: normalizeWorkspaceStatuses(state.ui?.workspaceStatuses),
     workspaceBoardOpacity: clampWorkspaceBoardOpacity(state.ui?.workspaceBoardOpacity),
     workspaceBoardColumnWidth: clampWorkspaceBoardColumnWidth(state.ui?.workspaceBoardColumnWidth),
+    workspaceBoardColumns: normalizeWorkspaceBoardColumns(state.ui?.workspaceBoardColumns),
     syncTaskStatusFromWorkspaceBoard: state.ui?.syncTaskStatusFromWorkspaceBoard === true,
     usagePercentageDisplay: normalizeUsagePercentageDisplay(state.ui?.usagePercentageDisplay),
     statusBarUsageMode: normalizeStatusBarUsageMode(state.ui?.statusBarUsageMode),

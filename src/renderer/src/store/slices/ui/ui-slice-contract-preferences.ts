@@ -20,6 +20,7 @@ import type { CustomPet } from '../../../../../shared/pet-types'
 import type { ReleaseChannel } from '../../../../../shared/release-channel'
 import type { ChangelogData, UpdateStatus } from '../../../../../shared/update-status-types'
 import type { StatusBarUsageMode } from '../../../../../shared/status-bar-usage-mode'
+import type { WorkspaceBoardColumns } from '../../../../../shared/workspace-board-columns'
 import type { PersistedUIWriteBaseline } from '../persisted-ui-write-baseline'
 import type { UISliceCore } from './ui-slice-contract-core'
 
@@ -27,7 +28,7 @@ export type UISlicePreferences = {
   /** Which list the sidebar body shows. Navigator-only; does not change the active view. */
   sidebarBody: 'workspaces' | 'agents'
   setSidebarBody: (body: UISlicePreferences['sidebarBody']) => void
-  groupBy: 'none' | 'workspace-status' | 'repo' | 'pr-status'
+  groupBy: 'none' | 'workspace-status' | 'priority' | 'repo' | 'pr-status'
   setGroupBy: (g: UISlicePreferences['groupBy']) => void
   sortBy: 'name' | 'smart' | 'recent' | 'repo' | 'manual'
   setSortBy: (s: UISlicePreferences['sortBy']) => void
@@ -101,6 +102,8 @@ export type UISlicePreferences = {
   setWorkspaceBoardOpacity: (opacity: number) => void
   workspaceBoardColumnWidth: number
   setWorkspaceBoardColumnWidth: (width: number) => void
+  workspaceBoardColumns: WorkspaceBoardColumns
+  setWorkspaceBoardColumns: (columns: WorkspaceBoardColumns) => void
   syncTaskStatusFromWorkspaceBoard: boolean
   setSyncTaskStatusFromWorkspaceBoard: (enabled: boolean) => void
   /** Transient: the in-window Agent Dashboard companion drawer is open. Not persisted. */

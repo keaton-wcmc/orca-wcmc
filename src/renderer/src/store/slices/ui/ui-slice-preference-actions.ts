@@ -222,6 +222,12 @@ export function createUiPreferenceActions(set: UISliceSet, get: UISliceGet): Par
       set({ workspaceBoardColumnWidth: clamped })
     },
 
+    workspaceBoardColumns: 'status',
+    setWorkspaceBoardColumns: (columns) => {
+      window.api.ui.set({ workspaceBoardColumns: columns }).catch(console.error)
+      set({ workspaceBoardColumns: columns })
+    },
+
     syncTaskStatusFromWorkspaceBoard: false,
     setSyncTaskStatusFromWorkspaceBoard: (enabled) => {
       window.api.ui.set({ syncTaskStatusFromWorkspaceBoard: enabled }).catch(console.error)

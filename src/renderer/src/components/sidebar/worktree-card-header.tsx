@@ -8,6 +8,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { translate } from '@/i18n/i18n'
 import { cn } from '@/lib/utils'
 import type { Repo } from '../../../../shared/repo-types'
+import { getWorkspacePriority } from '../../../../shared/workspace-priority'
+import { WorkspacePriorityIcon, getWorkspacePriorityLabel } from '../workspace-priority-icon'
 import { resolveRepoHeaderColor } from './project-header-color'
 import { formatSparseDirectoryPreview, shouldBeginWorktreeRename } from './worktree-card-model'
 import type { WorktreeCardPresentation } from './worktree-card-presentation'
@@ -95,6 +97,7 @@ export function WorktreeCardHeader({
     titleRowIndicators,
     titleWrapper
   } = presentation
+  const priority = getWorkspacePriority(worktree)
 
   return (
     <div className="flex min-w-0 items-center justify-between gap-2">
@@ -171,6 +174,19 @@ export function WorktreeCardHeader({
               iconClassName="size-3"
             />
           </RepoIdentityChip>
+        )}
+
+        {priority && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="inline-flex shrink-0 items-center text-muted-foreground">
+                <WorkspacePriorityIcon priority={priority} className="size-3.5" announce />
+              </span>
+            </TooltipTrigger>
+            <TooltipContent side="right" sideOffset={8}>
+              {getWorkspacePriorityLabel(priority)}
+            </TooltipContent>
+          </Tooltip>
         )}
 
         {/* Why: unread alert lives in the left status lane; title-row contrast comes from weight and dimmed read titles. */}

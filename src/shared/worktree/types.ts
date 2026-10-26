@@ -9,6 +9,7 @@ import type { BuiltInWorktreeVisibilitySourceId } from '../repo-types'
 import type { WorktreeIdentity } from './identity'
 import type { WorktreeScanFailureKind } from '../worktree-scan-failure'
 import type { SmartTier } from '../sidebar-list/sort-stamps'
+import type { WorkspacePriority } from '../workspace-priority'
 
 export type WorkspaceAttachmentOrigin = {
   kind: 'observed'
@@ -186,6 +187,8 @@ export type Worktree = {
   /** Path-derived worktree ids this worktree had before folder renames. */
   priorWorktreeIds?: string[]
   workspaceStatus?: WorkspaceStatus
+  /** User-assigned triage priority; absent or null is untriaged. */
+  priority?: WorkspacePriority | null
   diffComments?: DiffComment[]
   mobileDiffReview?: MobileDiffReviewState
   automationProvenance?: AutomationWorkspaceProvenance

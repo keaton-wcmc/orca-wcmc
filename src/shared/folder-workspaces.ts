@@ -7,6 +7,7 @@ import { isWorkspaceLinkedItemSourceContextMatch } from './workspace-linked-item
 import { normalizeWorkspaceCreatorProvenance } from './workspace-creator-provenance'
 import { getWorkspaceAttachments } from './workspace-attachments'
 import { isSmartTier } from './sidebar-list/sort-stamps'
+import { workspacePriorityField } from './workspace-priority'
 
 export function normalizeFolderWorkspaceName(
   name: string | null | undefined,
@@ -102,6 +103,7 @@ export function normalizeFolderWorkspaces(
       ...(typeof raw.workspaceStatus === 'string' && raw.workspaceStatus.trim().length > 0
         ? { workspaceStatus: raw.workspaceStatus }
         : {}),
+      ...workspacePriorityField(raw),
       ...(isTuiAgent(raw.createdWithAgent) ? { createdWithAgent: raw.createdWithAgent } : {}),
       ...(raw.pendingFirstAgentMessageRename === true
         ? { pendingFirstAgentMessageRename: true }

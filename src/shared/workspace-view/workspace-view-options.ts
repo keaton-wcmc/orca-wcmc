@@ -21,6 +21,7 @@ export type WorkspaceViewChoice<Id extends string> = {
 export const WORKSPACE_GROUP_BY_CHOICES = [
   { id: 'none', label: 'None' },
   { id: 'workspace-status', label: 'Status' },
+  { id: 'priority', label: 'Priority' },
   { id: 'pr-status', label: 'PR' },
   { id: 'repo', label: 'Project' }
 ] as const satisfies readonly WorkspaceViewChoice<PersistedUIState['groupBy']>[]

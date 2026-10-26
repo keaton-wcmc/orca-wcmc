@@ -1,4 +1,5 @@
 import { isSmartTier, type SmartTier } from './sort-stamps'
+import { compareWorkspacePriority, type WorkspacePriority } from '../workspace-priority'
 
 /** The sort stamps a row carries, as its owning host wrote them. */
 export type StampOrderRow = {
@@ -7,6 +8,7 @@ export type StampOrderRow = {
   smartAt?: number
   /** The workspace unread flag: an agent finished while you were not looking. */
   isUnread?: boolean
+  priority?: WorkspacePriority | null
 }
 
 const TIER_RANK: Record<SmartTier, number> = { 'needs-you': 0, done: 1, working: 2 }
@@ -32,12 +34,13 @@ function tierRank(row: StampOrderRow): number {
   return TIER_RANK[row.smartTier]
 }
 
-/** Smart by stamps: Needs you, unread Done, Working, each newest first; then Rest by Recent. */
+/** Smart by stamps: Needs you, unread Done, Working, then Rest; each by priority, then newest first. */
 export function compareSmartStamps(a: StampOrderRow, b: StampOrderRow): number {
   const rankA = tierRank(a)
   const rankB = tierRank(b)
   return (
     rankA - rankB ||
+    compareWorkspacePriority(a, b) ||
     (rankA < REST_RANK ? finiteOr0(b.smartAt) - finiteOr0(a.smartAt) : 0) ||
     recentStamp(b) - recentStamp(a)
   )

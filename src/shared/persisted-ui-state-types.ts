@@ -26,6 +26,7 @@ import type {
   WorktreeCardProperty
 } from './ui-chrome-types'
 import type { WorkspaceStatusDefinition } from './worktree/types'
+import type { WorkspaceBoardColumns } from './workspace-board-columns'
 import type { PersistedAutomationHostFilter } from './automation-host-filter'
 
 export type PersistedUIState = {
@@ -43,7 +44,7 @@ export type PersistedUIState = {
   rightSidebarWidth: number
   markdownTocPanelWidth?: number
   combinedDiffFileTreeWidth?: number
-  groupBy: 'none' | 'workspace-status' | 'repo' | 'pr-status'
+  groupBy: 'none' | 'workspace-status' | 'priority' | 'repo' | 'pr-status'
   sortBy: 'name' | 'smart' | 'recent' | 'repo' | 'manual'
   /** Project header ordering in `groupBy: 'repo'`, independent of `sortBy`: 'manual' uses persisted order + header drag, 'recent' by latest visible activity. */
   projectOrderBy: ProjectOrderBy
@@ -110,6 +111,7 @@ export type PersistedUIState = {
   workspaceStatuses?: WorkspaceStatusDefinition[]
   workspaceBoardOpacity?: number
   workspaceBoardColumnWidth?: number
+  workspaceBoardColumns?: WorkspaceBoardColumns
   syncTaskStatusFromWorkspaceBoard?: boolean
   /** One-shot migration flag for a short-lived build that persisted default statuses in reverse order; once stamped, ordering is never re-inferred from IDs/labels. */
   _workspaceStatusesDefaultOrderMigrated?: boolean

@@ -47,6 +47,15 @@ describe('worktree metadata write normalization', () => {
     expect(updated.suppressedGitHubPR).toBeNull()
   })
 
+  it('stores a set priority and removes the key when an update clears it', () => {
+    const urgent = mergeWorktreeMetaForWrite(existingMeta, { priority: 'urgent' })
+    expect(urgent.priority).toBe('urgent')
+    expect(mergeWorktreeMetaForWrite(urgent, { comment: 'note' }).priority).toBe('urgent')
+    expect(Object.hasOwn(mergeWorktreeMetaForWrite(urgent, { priority: null }), 'priority')).toBe(
+      false
+    )
+  })
+
   it('preserves suppression for clears and unrelated metadata updates', () => {
     expect(mergeWorktreeMetaForWrite(existingMeta, { linkedPR: null }).suppressedGitHubPR).toBe(42)
     expect(mergeWorktreeMetaForWrite(existingMeta, { comment: 'note' }).suppressedGitHubPR).toBe(42)

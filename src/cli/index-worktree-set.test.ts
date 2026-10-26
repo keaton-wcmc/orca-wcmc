@@ -170,6 +170,61 @@ describe('orca cli worktree awareness', () => {
     })
   })
 
+  it('clears priority with --priority none on a host that supports it', async () => {
+    queueFixtures(
+      callMock,
+      okFixture('req_status', { capabilities: ['worktree.priority.v1'] }),
+      okFixture('req_set_priority', { worktree: buildWorktree('/tmp/repo/feature', 'feature') })
+    )
+    vi.spyOn(console, 'log').mockImplementation(() => {})
+
+    await main(
+      ['worktree', 'set', '--worktree', 'id:repo::/tmp/repo/feature', '--priority', 'none'],
+      '/tmp/repo'
+    )
+
+    expect(callMock).toHaveBeenNthCalledWith(2, 'worktree.set', {
+      worktree: 'id:repo::/tmp/repo/feature',
+      priority: null,
+      noParent: false
+    })
+  })
+
+  it('refuses --priority on a host that would drop it, without writing', async () => {
+    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.spyOn(console, 'log').mockImplementation(() => {})
+    const priorExitCode = process.exitCode
+    queueFixtures(callMock, okFixture('req_status', { capabilities: [] }))
+
+    await main(
+      ['worktree', 'set', '--worktree', 'id:repo::/tmp/repo/feature', '--priority', 'urgent'],
+      '/tmp/repo'
+    )
+
+    expect(callMock).not.toHaveBeenCalledWith('worktree.set', expect.anything())
+    expect(errSpy.mock.calls.flat().join('\n')).toContain(
+      'Update the Orca runtime to set workspace priority.'
+    )
+    expect(process.exitCode).toBe(1)
+    process.exitCode = priorExitCode
+  })
+
+  it('rejects an unknown --priority level before calling the runtime', async () => {
+    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const priorExitCode = process.exitCode
+
+    await main(
+      ['worktree', 'set', '--worktree', 'id:repo::/tmp/repo/feature', '--priority', 'p0'],
+      '/tmp/repo'
+    )
+
+    expect(callMock).not.toHaveBeenCalled()
+    expect(errSpy.mock.calls.flat().join('\n')).toContain(
+      '--priority must be one of: urgent, high, medium, low, none.'
+    )
+    process.exitCode = priorExitCode
+  })
+
   it('rejects contradictory parent flags on worktree.set before resolving selectors', async () => {
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
     const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {})

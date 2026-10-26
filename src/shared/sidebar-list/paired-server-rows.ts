@@ -16,6 +16,7 @@ import type { Worktree } from '../worktree/types'
 import { getWorkspaceRowKindFacts } from '../worktree/workspace-kinds'
 import { openEnum } from '../zod-salvage'
 import { DEFAULT_WORKSPACE_STATUS_ID } from '../workspace-statuses'
+import { WORKSPACE_PRIORITIES, workspacePriorityField } from '../workspace-priority'
 import { SMART_TIERS } from './sort-stamps'
 import { WorkspaceRowSchema } from './workspace-rows'
 import { HostReportedActivitySchema, type HostReportedActivity } from './workspace-activity-facts'
@@ -42,6 +43,7 @@ const PairedServerWorkspaceRowSchema = z
       instanceId: true,
       lineage: true,
       workspaceStatus: true,
+      priority: true,
       sortOrder: true,
       manualOrder: true,
       createdAt: true,
@@ -118,6 +120,7 @@ export function pairedServerRowOfWorktree(
         }
       : null,
     workspaceStatus: worktree.workspaceStatus ?? DEFAULT_WORKSPACE_STATUS_ID,
+    ...workspacePriorityField(worktree),
     sortOrder: worktree.sortOrder,
     manualOrder: worktree.manualOrder,
     createdAt: worktree.createdAt,
@@ -169,6 +172,7 @@ const ServerWorktreePsRowSchema = z.object({
   lineageWorktreeInstanceId: z.string().optional().catch(undefined),
   parentWorktreeInstanceId: z.string().optional().catch(undefined),
   workspaceStatus: z.string().catch(DEFAULT_WORKSPACE_STATUS_ID),
+  priority: z.enum(WORKSPACE_PRIORITIES).optional().catch(undefined),
   sortOrder: z.number().optional().catch(undefined),
   manualOrder: z.number().optional().catch(undefined),
   createdAt: z.number().optional().catch(undefined),

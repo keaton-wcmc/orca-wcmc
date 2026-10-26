@@ -9,6 +9,7 @@ import { isFeatureInteractionId } from '../feature-interactions'
 import type { FeatureInteractionId } from '../feature-interactions'
 import { ACTIVITY_GROUP_BY_VALUES, THREAD_READ_FILTER_VALUES } from '../agents-view-thread-filters'
 import { isReleaseChannel } from '../release-channel'
+import { WORKSPACE_BOARD_COLUMNS } from '../workspace-board-columns'
 import type { ReleaseChannel } from '../release-channel'
 import { ClientUiWorkspaceFilterFields } from './client-ui-workspace-filter-fields-params'
 import { TaskResumeState } from './task-resume-state-params'
@@ -134,7 +135,7 @@ export const UiUpdateFields = z
     rightSidebarWidth: z.number().finite().optional(),
     markdownTocPanelWidth: z.number().finite().optional(),
     combinedDiffFileTreeWidth: z.number().finite().optional(),
-    groupBy: z.enum(['none', 'workspace-status', 'repo', 'pr-status']).optional(),
+    groupBy: z.enum(['none', 'workspace-status', 'priority', 'repo', 'pr-status']).optional(),
     showWorkspaceLineage: z.boolean().optional(),
     sortBy: z.enum(['name', 'smart', 'recent', 'repo', 'manual']).optional(),
     projectOrderBy: z.enum(['manual', 'recent']).optional(),
@@ -178,6 +179,7 @@ export const UiUpdateFields = z
     workspaceStatuses: z.array(WorkspaceStatusDefinition).optional(),
     workspaceBoardOpacity: z.number().finite().optional(),
     workspaceBoardColumnWidth: z.number().finite().optional(),
+    workspaceBoardColumns: z.enum(WORKSPACE_BOARD_COLUMNS).optional(),
     syncTaskStatusFromWorkspaceBoard: z.boolean().optional(),
     _workspaceStatusesDefaultOrderMigrated: z.boolean().optional(),
     _workspaceStatusesReorderedDefaultRepaired: z.boolean().optional(),

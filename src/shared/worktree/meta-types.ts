@@ -15,6 +15,7 @@ import type { OrcaWorkspaceLayout } from '../global-settings-types'
 import type { DiffComment, MobileDiffReviewState } from '../diff-comment-types'
 import type { SmartTier } from '../sidebar-list/sort-stamps'
 import type { ExternalConversationLink } from '../external-conversation-link'
+import type { WorkspacePriority } from '../workspace-priority'
 
 // ─── Worktree metadata (persisted user-authored fields only) ─────────
 export type WorktreeMeta = {
@@ -91,6 +92,8 @@ export type WorktreeMeta = {
   orcaCreationWorkspaceLayout?: OrcaWorkspaceLayout
   /** User-assigned workspace board status for manual sidebar organization. */
   workspaceStatus?: WorkspaceStatus
+  /** See {@link Worktree.priority}. A null update clears it; the write path never stores null. */
+  priority?: WorkspacePriority | null
   diffComments?: DiffComment[]
   /** Path-derived worktree ids this worktree had before its folder was renamed
    *  on disk (the id embeds the path). Lets the daemon's session GC and registry

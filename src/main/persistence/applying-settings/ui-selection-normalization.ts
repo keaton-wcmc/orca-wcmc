@@ -6,6 +6,7 @@ export function normalizeGroupBy(groupBy: unknown): PersistedState['ui']['groupB
   if (
     groupBy === 'none' ||
     groupBy === 'workspace-status' ||
+    groupBy === 'priority' ||
     groupBy === 'repo' ||
     groupBy === 'pr-status'
   ) {

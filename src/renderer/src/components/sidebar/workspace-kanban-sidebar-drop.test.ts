@@ -1,5 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { WorkspaceStatusDefinition, Worktree } from '../../../../shared/worktree/types'
+import {
+  getWorkspacePriorityGroupKey,
+  type WorkspacePriority
+} from '../../../../shared/workspace-priority'
 import { serializeWorkspaceLaneFullIds } from './workspace-kanban-filtered-drop-index'
 import {
   buildWorkspaceKanbanSidebarDropUpdates,
@@ -559,6 +563,35 @@ function rowsFrom(byId: ReadonlyMap<string, Worktree>) {
 }
 
 describe('workspace kanban sidebar drop updates', () => {
+  it('writes priority, never status, for a drop on a Priority column', () => {
+    const lowTodo: Worktree = {
+      ...worktree({ id: 'todo-a', workspaceStatus: 'todo', sortOrder: 3000 }),
+      priority: 'low'
+    }
+    const worktreeById = new Map([['todo-a', lowTodo]])
+    const dropOn = (priority: WorkspacePriority | null) =>
+      buildWorkspaceKanbanSidebarDropUpdates({
+        worktreeIds: ['todo-a'],
+        status: getWorkspacePriorityGroupKey(priority),
+        dropIndex: 0,
+        groups: [],
+        rowsFor: rowsFrom(worktreeById),
+        allWorktreeIds: [...worktreeById.keys()],
+        rankByWorktreeId: new Map(),
+        workspaceStatuses,
+        sortBy: 'recent',
+        now: 10_000
+      }).updates
+
+    expect(dropOn('urgent')).toEqual([
+      { worktreeId: 'todo-a', updates: { priority: 'urgent' }, executionHostId: 'local' }
+    ])
+    expect(dropOn(null)).toEqual([
+      { worktreeId: 'todo-a', updates: { priority: null }, executionHostId: 'local' }
+    ])
+    expect(dropOn('low')).toEqual([])
+  })
+
   it('writes a status-only update for cross-lane drops outside Manual sort', () => {
     const worktreeById = new Map([
       ['todo-a', worktree({ id: 'todo-a', workspaceStatus: 'todo', sortOrder: 3000 })],

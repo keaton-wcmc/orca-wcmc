@@ -12,6 +12,7 @@ import { collectTwinHostsAlsoSlept } from './sleep-twin-confirmation'
 import { activateAndRevealWorktree } from '@/lib/worktree-activation'
 import { resolveWorktreeDisplayName } from '@/lib/worktree-default-display-name'
 import { VIRTUALIZED_SCROLL_ANCHOR_RECORD_EVENT } from '@/hooks/useVirtualizedScrollAnchor'
+import { getWorkspacePriority, type WorkspacePriority } from '../../../../shared/workspace-priority'
 import {
   planWorkspaceStatusAssignment,
   preserveDeleteSiblingPosition
@@ -127,6 +128,23 @@ export function useWorktreeContextMenuCommands(args: {
     },
     [args]
   )
+  const handleAssignPriority = useCallback(
+    (priority: WorkspacePriority | null) => {
+      args.setMenuOpenState(false)
+      void Promise.all(
+        args.activeContextWorktrees
+          .filter((worktree) => getWorkspacePriority(worktree) !== priority)
+          .map((worktree) =>
+            args.updateWorktreeMeta(
+              worktree.id,
+              { priority },
+              { executionHostId: worktree.hostId ?? 'local' }
+            )
+          )
+      )
+    },
+    [args]
+  )
   const handleRename = useCallback(() => {
     args.openModal('edit-meta', {
       worktreeId: args.worktree.id,
@@ -179,6 +197,7 @@ export function useWorktreeContextMenuCommands(args: {
     }
   }, [args.validParentWorktreeId])
   return {
+    handleAssignPriority,
     handleAssignWorkspaceStatus,
     handleCloseTerminals,
     handleCopyName,

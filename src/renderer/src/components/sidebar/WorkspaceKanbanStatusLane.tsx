@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import WorkspaceKanbanLaneCardList from './WorkspaceKanbanLaneCardList'
 import { serializeWorkspaceLaneFullIds } from './workspace-kanban-filtered-drop-index'
-import { getWorkspaceStatusVisualMeta } from './workspace-status'
+import { getWorkspaceBoardLaneVisualMeta } from './workspace-board-lanes'
 import { translate } from '@/i18n/i18n'
 
 type WorkspaceKanbanStatusLaneProps = {
@@ -44,7 +44,8 @@ type WorkspaceKanbanStatusLaneProps = {
     worktree: Worktree
   ) => readonly Worktree[]
   onAssignWorkspaceStatus?: (worktreeIds: readonly string[], status: WorkspaceStatus) => void
-  onCreateWorktree: (statusId: string) => void
+  /** Absent on priority columns: a new workspace has no priority to inherit from the lane. */
+  onCreateWorktree?: (statusId: string) => void
   onColumnResizeStart: (event: React.PointerEvent<HTMLElement>) => void
   onColumnResizeKeyDown: (event: React.KeyboardEvent<HTMLElement>) => void
 }
@@ -76,7 +77,7 @@ function WorkspaceKanbanStatusLane({
   onColumnResizeKeyDown
 }: WorkspaceKanbanStatusLaneProps): React.JSX.Element {
   const laneScrollRef = useRef<HTMLDivElement | null>(null)
-  const meta = getWorkspaceStatusVisualMeta(status)
+  const meta = getWorkspaceBoardLaneVisualMeta(status)
   // Why: a lane that is empty on its own merits is still "Empty" under a query —
   // only a lane whose cards were filtered away has anything to say about matches.
   const laneTotalCount = totalCount ?? items.length
@@ -100,7 +101,7 @@ function WorkspaceKanbanStatusLane({
       size="icon-xs"
       className="size-6 text-muted-foreground"
       aria-label={createTooltip}
-      onClick={() => onCreateWorktree(status.id)}
+      onClick={() => onCreateWorktree?.(status.id)}
     >
       <Plus className="size-3.5" />
     </Button>
@@ -169,12 +170,14 @@ function WorkspaceKanbanStatusLane({
             {isFiltered ? `${items.length} / ${laneTotalCount}` : items.length}
           </div>
         </div>
-        <Tooltip>
-          <TooltipTrigger asChild>{createButton}</TooltipTrigger>
-          <TooltipContent side="bottom" sideOffset={6}>
-            {createTooltip}
-          </TooltipContent>
-        </Tooltip>
+        {onCreateWorktree ? (
+          <Tooltip>
+            <TooltipTrigger asChild>{createButton}</TooltipTrigger>
+            <TooltipContent side="bottom" sideOffset={6}>
+              {createTooltip}
+            </TooltipContent>
+          </Tooltip>
+        ) : null}
       </div>
 
       <div
@@ -208,26 +211,28 @@ function WorkspaceKanbanStatusLane({
               : translate('auto.components.sidebar.WorkspaceKanbanStatusLane.8ad104642b', 'Empty')}
           </div>
         )}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              type="button"
-              variant="secondary"
-              size="xs"
-              className={cn(
-                'mt-2 h-7 w-full can-hover:opacity-0 transition-opacity',
-                'group-hover/lane:opacity-100 group-focus-within/lane:opacity-100'
-              )}
-              aria-label={createTooltip}
-              onClick={() => onCreateWorktree(status.id)}
-            >
-              <Plus className="size-3.5" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="top" sideOffset={6}>
-            {createTooltip}
-          </TooltipContent>
-        </Tooltip>
+        {onCreateWorktree ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="secondary"
+                size="xs"
+                className={cn(
+                  'mt-2 h-7 w-full can-hover:opacity-0 transition-opacity',
+                  'group-hover/lane:opacity-100 group-focus-within/lane:opacity-100'
+                )}
+                aria-label={createTooltip}
+                onClick={() => onCreateWorktree(status.id)}
+              >
+                <Plus className="size-3.5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top" sideOffset={6}>
+              {createTooltip}
+            </TooltipContent>
+          </Tooltip>
+        ) : null}
       </div>
     </section>
   )

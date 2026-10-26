@@ -1,6 +1,7 @@
 import { ORCA_SIDEBAR_INPUTS_IS_MAIN } from '../../shared/sidebar-inputs-switch'
 import type { Worktree } from '../../shared/worktree/types'
 import { DEFAULT_WORKSPACE_STATUS_ID } from '../../shared/workspace-statuses'
+import { workspacePriorityField } from '../../shared/workspace-priority'
 import type { RuntimeWorktreePsSummary } from '../../shared/runtime-types'
 import { folderWorkspaceToWorktree } from '../../shared/folder-workspace-worktree'
 import { getWorkspaceAttachments } from '../../shared/workspace-attachments'
@@ -60,6 +61,7 @@ export function buildRuntimeWorktreePsSummaries(args: {
       childWorktreeIds: worktree.childWorktreeIds,
       displayName: worktree.displayName,
       workspaceStatus: meta?.workspaceStatus ?? DEFAULT_WORKSPACE_STATUS_ID,
+      ...workspacePriorityField(meta ?? {}),
       sortOrder: meta?.sortOrder ?? 0,
       ...(meta?.manualOrder !== undefined ? { manualOrder: meta.manualOrder } : {}),
       lastActivityAt: worktree.lastActivityAt,
@@ -110,6 +112,7 @@ export function buildRuntimeWorktreePsSummaries(args: {
       childWorktreeIds: [],
       displayName: worktree.displayName,
       workspaceStatus: worktree.workspaceStatus ?? DEFAULT_WORKSPACE_STATUS_ID,
+      ...workspacePriorityField(worktree),
       sortOrder: worktree.sortOrder ?? 0,
       ...(worktree.manualOrder !== undefined ? { manualOrder: worktree.manualOrder } : {}),
       lastActivityAt: worktree.lastActivityAt,

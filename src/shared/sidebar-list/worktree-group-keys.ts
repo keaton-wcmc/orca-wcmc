@@ -7,6 +7,7 @@ import {
   getWorkspaceStatusGroupKey
 } from '../workspace-statuses'
 import { ALL_GROUP_KEY, getPRLaneKey, getProjectGroupHeaderKey } from './group-keys'
+import { getWorkspacePriority, getWorkspacePriorityGroupKey } from '../workspace-priority'
 import { buildProjectGroupingIndex, getProjectGroupingForRepo } from '../project-section-grouping'
 import type { ProjectSectionModel } from '../project-section-grouping'
 import type { SidebarPRGroupReader, WorktreeGroupBy } from './row-types'
@@ -25,6 +26,9 @@ export function getGroupKeyForWorktree(
   }
   if (groupBy === 'workspace-status') {
     return getWorkspaceStatusGroupKey(getWorkspaceStatus(worktree, workspaceStatuses))
+  }
+  if (groupBy === 'priority') {
+    return getWorkspacePriorityGroupKey(getWorkspacePriority(worktree))
   }
   if (groupBy === 'repo') {
     return getProjectGroupingForRepo(

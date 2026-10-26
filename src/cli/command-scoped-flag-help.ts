@@ -57,6 +57,8 @@ const COMMAND_SCOPED_FLAG_HELP: Record<string, Record<string, string>> = {
     agent: '--agent <names>        Comma-separated install targets; default is detected agents'
   },
   'worktree set': {
+    priority:
+      '--priority <level>     Workspace priority: urgent, high, medium, low, or none to clear',
     unread: '--unread               Mark the workspace unread in the sidebar',
     read: '--read                 Mark the workspace read, clearing the unread dot'
   },

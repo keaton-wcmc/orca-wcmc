@@ -10,6 +10,10 @@ import {
   ConductorReviewIcon
 } from '../../workspace-status-icons'
 import { getWorkspaceStatusVisualMeta } from '../../workspace-status'
+import {
+  getWorkspacePriorityLabel,
+  getWorkspacePriorityLaneIcon
+} from '../../../workspace-priority-icon'
 
 const PR_GROUP_META: Record<
   PRGroupKey,
@@ -97,5 +101,11 @@ export function getSidebarHeaderVisual(
       )
       return { icon: statusIcon, tone }
     }
+    case 'priority':
+      return {
+        icon: getWorkspacePriorityLaneIcon(icon.priority),
+        tone: 'text-foreground',
+        label: getWorkspacePriorityLabel(icon.priority)
+      }
   }
 }

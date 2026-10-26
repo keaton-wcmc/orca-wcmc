@@ -3,7 +3,7 @@ import {
   parseWorkspaceLaneFullIds,
   resolveFullLaneDropIndex
 } from './workspace-kanban-filtered-drop-index'
-import { getWorkspaceStatus } from './workspace-status'
+import { getWorkspaceBoardRowLaneKey } from './workspace-board-lanes'
 import { collectDropWrites, type DropWriteRows } from './worktree-list/drag/dragged-worktree-copies'
 import {
   buildManualOrderUpdatesForGroupDrop,
@@ -223,7 +223,9 @@ export function buildWorkspaceKanbanSidebarDropUpdates(args: {
   shouldSwitchToManual: boolean
 } {
   const sourceGroupKeys = args.worktreeIds.flatMap((worktreeId) =>
-    args.rowsFor.status(worktreeId).map((row) => getWorkspaceStatus(row, args.workspaceStatuses))
+    args.rowsFor
+      .status(worktreeId)
+      .map((row) => getWorkspaceBoardRowLaneKey(row, args.status, args.workspaceStatuses))
   )
   const writeManualOrder = shouldWriteManualOrderForGroupDrop({
     sortBy: args.sortBy,

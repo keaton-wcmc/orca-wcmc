@@ -16,6 +16,8 @@ import { HostKindIcon } from './HostKindIcon'
 import { MobileRepoIcon } from './MobileRepoIcon'
 import { WorktreeAgentList } from './WorktreeAgentList'
 import { WorktreeMetaGlyphs, prStateColor } from './WorktreeMetaGlyphs'
+import { WorkspacePriorityGlyph } from './WorkspacePriorityGlyph'
+import { getWorkspacePriority } from '../../../src/shared/workspace-priority'
 
 // Strip the refs/heads/ prefix for display, matching the desktop sidebar
 // (WorktreeCardHelpers.formatBranchName).
@@ -69,6 +71,7 @@ function WorktreeListRowComponent({
   const lineageChildCount = item.lineageChildCount ?? 0
   const shouldHideRepo = hideRepo && !item.showProjectName
   const showRepoChip = cardDetails.repoInTitle && !shouldHideRepo && !isFolderWorkspace
+  const priority = getWorkspacePriority(item)
   const showRepoInMetaRow = !cardDetails.repoInTitle && !shouldHideRepo
   const hostId = item.hostContextHostId ?? item.hostId
   const hostAccessibilityLabel = [item.hostContextLabel, item.hostContextHealthLabel]
@@ -121,6 +124,7 @@ function WorktreeListRowComponent({
               <MobileRepoIcon repoIcon={repoIcon} size={11} color={repoColor} />
             </View>
           )}
+          {priority && <WorkspacePriorityGlyph priority={priority} />}
           <Text
             style={[
               styles.worktreeName,

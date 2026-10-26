@@ -63,6 +63,8 @@ function renderHeader(
     totalCount: 0,
     onQueryChange: vi.fn(),
     onClearQuery: vi.fn(),
+    columns: 'status',
+    onColumnsChange: vi.fn(),
     workspaceStatuses: statuses,
     syncTaskStatusFromWorkspaceBoard: false,
     onSyncTaskStatusFromWorkspaceBoardChange: vi.fn(),

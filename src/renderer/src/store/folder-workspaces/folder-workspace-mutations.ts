@@ -4,6 +4,7 @@ import type { StateCreator } from 'zustand'
 import type { AppState } from '../types'
 import type { FolderWorkspace } from '../../../../shared/folder-workspace-types'
 import { WORKTREE_LINKED_WORK_ITEM_CONTEXT_RUNTIME_CAPABILITY } from '../../../../shared/protocol-version'
+import { assertWorkspacePriorityWriteCapability } from '../../runtime/runtime-workspace-priority-capability'
 import {
   assertRuntimeEnvironmentCapability,
   callRuntimeRpc
@@ -165,6 +166,7 @@ export function createFolderWorkspaceMutationActions(
           'Update the remote runtime to link Jira'
         )
       }
+      await assertWorkspacePriorityWriteCapability(target, updates)
       const updateTicket = folderWorkspaceUpdates.begin(
         updateIdentity,
         Object.keys(updates) as FolderWorkspaceUpdateField[]

@@ -4,7 +4,11 @@ import type {
   WorkspaceStatus,
   WorkspaceStatusDefinition
 } from '../../../../../../shared/worktree/types'
-import { getWorkspaceStatus, getWorkspaceStatusGroupKey } from '../../workspace-status'
+import { getWorkspaceStatusGroupKey } from '../../workspace-status'
+import {
+  getWorkspaceBoardLaneUpdate,
+  getWorkspaceBoardRowLaneKey
+} from '../../workspace-board-lanes'
 import {
   buildManualOrderUpdatesForGroupDrop,
   buildManualOrderUpdatesForVisibleGroups,
@@ -56,12 +60,11 @@ export function useWorktreeStatusMutations(args: {
   const moveWorktreeToStatus = useCallback(
     (worktreeId: string, status: WorkspaceStatus) => {
       for (const row of dropWriteRows(useAppStore.getState(), undefined).status(worktreeId)) {
-        if (getWorkspaceStatus(row, workspaceStatuses) !== status) {
-          void updateWorktreeMeta(
-            worktreeId,
-            { workspaceStatus: status },
-            { executionHostId: row.hostId ?? 'local' }
-          )
+        const updates = getWorkspaceBoardLaneUpdate(row, status, workspaceStatuses)
+        if (Object.keys(updates).length > 0) {
+          void updateWorktreeMeta(worktreeId, updates, {
+            executionHostId: row.hostId ?? 'local'
+          })
         }
       }
     },
@@ -148,7 +151,9 @@ export function useWorktreeStatusMutations(args: {
       return shouldWriteManualOrderForGroupDrop({
         sortBy,
         sourceGroupKeys: worktreeIds.flatMap((worktreeId) =>
-          rowsFor.status(worktreeId).map((row) => getWorkspaceStatus(row, workspaceStatuses))
+          rowsFor
+            .status(worktreeId)
+            .map((row) => getWorkspaceBoardRowLaneKey(row, status, workspaceStatuses))
         ),
         targetGroupKey: status
       })

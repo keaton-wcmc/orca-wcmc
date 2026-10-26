@@ -7,6 +7,7 @@ import type {
 } from '../../../src/shared/runtime-types'
 import type { ProjectSectionRepo } from '../../../src/shared/project-section-grouping'
 import type { WorkspaceRowFilters } from '../../../src/shared/workspace-view/workspace-row-filters'
+import type { WorkspacePriority } from '../../../src/shared/workspace-priority'
 
 export type Worktree = {
   sectionListKey?: string
@@ -27,6 +28,7 @@ export type Worktree = {
   branch: string
   displayName: string
   workspaceStatus?: string
+  priority?: WorkspacePriority
   sortOrder?: number
   manualOrder?: number
   lastActivityAt?: number

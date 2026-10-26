@@ -2,6 +2,8 @@ import { useState, type ComponentType } from 'react'
 import { Text, View } from 'react-native'
 import { MobileSearchField } from '../components/MobileSearchField'
 import { MobileSegmentedControl } from '../components/MobileSegmentedControl'
+import { useOptionalHostProtocolGates } from '../components/host-protocol-gates-context'
+import { WORKTREE_PRIORITY_RUNTIME_CAPABILITY } from '../../../src/shared/worktree-runtime-capabilities'
 import {
   WORKSPACE_AGENT_ACTIVITY_LAYOUT_CHOICES,
   WORKSPACE_CARD_DISPLAY_CHOICES,
@@ -277,23 +279,31 @@ function filterSwitch(
   }
 }
 
+function GroupByRow({ controller }: WorkspaceOptionProps) {
+  // Why: an older desktop refuses groupBy 'priority', so offer it only where the host can keep it.
+  const hostCapabilities = useOptionalHostProtocolGates()?.hostCapabilities ?? []
+  const choices = WORKSPACE_GROUP_BY_CHOICES.filter(
+    ({ id }) =>
+      id !== 'priority' ||
+      controller.state.view.groupBy === 'priority' ||
+      hostCapabilities.includes(WORKTREE_PRIORITY_RUNTIME_CAPABILITY)
+  )
+  return (
+    <MobileSegmentedControl
+      segments={choices.map(({ id, label }) => ({ value: id, label }))}
+      selected={controller.state.view.groupBy}
+      onSelect={controller.settings.handleGroupChange}
+      fill
+      style={styles.optionSegmented}
+    />
+  )
+}
+
 /** One phone control per shared option; a new option fails to compile until it has one. */
 export const WORKSPACE_OPTION_CONTROLS: Record<WorkspaceViewOptionKey, WorkspaceOptionControl> = {
   hosts: { kind: 'page', value: hostsValue, Page: HostsPage },
   projects: { kind: 'page', value: projectsValue, Page: ProjectsPage },
-  groupBy: {
-    kind: 'inline',
-    framed: false,
-    Row: ({ controller }) => (
-      <MobileSegmentedControl
-        segments={WORKSPACE_GROUP_BY_CHOICES.map(({ id, label }) => ({ value: id, label }))}
-        selected={controller.state.view.groupBy}
-        onSelect={controller.settings.handleGroupChange}
-        fill
-        style={styles.optionSegmented}
-      />
-    )
-  },
+  groupBy: { kind: 'inline', framed: false, Row: GroupByRow },
   sortBy: choicePage(
     WORKSPACE_SORT_BY_CHOICES,
     (controller) => controller.state.view.sortBy,

@@ -3,6 +3,7 @@ import type { WorktreeOccurrencePlan } from '../worktree-occurrence-plan'
 import type { WorkspaceStatusDefinition, Worktree } from '../worktree/types'
 import type { ExecutionHostId } from '../execution-host'
 import { getWorkspaceStatusFromGroupKey } from '../workspace-statuses'
+import { getWorkspacePriorityFromGroupKey } from '../workspace-priority'
 import type { PRGroupKey } from './group-keys'
 import type { NoticeHostContext } from './host-labels'
 import {
@@ -72,6 +73,16 @@ export function appendOrderedGroups(
     const isCollapsed = collapsedGroups.has(key)
     const repo = group.repo
     const folderPairs = group.folderWorkspaces ?? []
+    const laneHostFields = () => ({
+      hostWorktreeCounts: getLaneHostWorktreeCounts(
+        group.items,
+        folderPairs,
+        repoOf,
+        defaultHostId
+      ),
+      hostWorktreeIds: getLaneHostWorktreeIds(group.items, folderPairs, repoOf, defaultHostId),
+      worktreeIds: group.items.map((worktree) => worktree.id)
+    })
     const header =
       groupBy === 'repo'
         ? {
@@ -96,43 +107,30 @@ export function appendOrderedGroups(
                 label: definition?.label ?? workspaceStatus,
                 count: group.items.length + folderPairs.length,
                 icon: { kind: 'workspace-status' as const, status: workspaceStatus },
-                hostWorktreeCounts: getLaneHostWorktreeCounts(
-                  group.items,
-                  folderPairs,
-                  repoOf,
-                  defaultHostId
-                ),
-                hostWorktreeIds: getLaneHostWorktreeIds(
-                  group.items,
-                  folderPairs,
-                  repoOf,
-                  defaultHostId
-                ),
-                worktreeIds: group.items.map((worktree) => worktree.id)
+                ...laneHostFields()
               }
             })()
-          : (() => {
-              const prGroup = key.replace(/^pr:/, '') as PRGroupKey
-              return {
+          : groupBy === 'priority'
+            ? {
                 type: 'header' as const,
                 key,
                 count: group.items.length + folderPairs.length,
-                icon: { kind: 'pr-status' as const, prGroup },
-                hostWorktreeCounts: getLaneHostWorktreeCounts(
-                  group.items,
-                  folderPairs,
-                  repoOf,
-                  defaultHostId
-                ),
-                hostWorktreeIds: getLaneHostWorktreeIds(
-                  group.items,
-                  folderPairs,
-                  repoOf,
-                  defaultHostId
-                ),
-                worktreeIds: group.items.map((worktree) => worktree.id)
+                icon: {
+                  kind: 'priority' as const,
+                  priority: getWorkspacePriorityFromGroupKey(key) ?? null
+                },
+                ...laneHostFields()
               }
-            })()
+            : (() => {
+                const prGroup = key.replace(/^pr:/, '') as PRGroupKey
+                return {
+                  type: 'header' as const,
+                  key,
+                  count: group.items.length + folderPairs.length,
+                  icon: { kind: 'pr-status' as const, prGroup },
+                  ...laneHostFields()
+                }
+              })()
 
     result.push(header)
     if (!isCollapsed) {

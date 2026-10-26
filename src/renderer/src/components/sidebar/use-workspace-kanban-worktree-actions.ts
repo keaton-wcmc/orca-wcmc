@@ -1,6 +1,10 @@
 import { useCallback } from 'react'
 import { useAppStore } from '@/store'
-import { getWorkspaceStatus } from './workspace-status'
+import {
+  getWorkspaceBoardLaneUpdate,
+  getWorkspaceBoardRowLaneKey,
+  isWorkspaceBoardStatusLane
+} from './workspace-board-lanes'
 import { switchSortToManualAfterDrop } from './manual-sort-switch-toast'
 import { resolveFullLaneDropIndex } from './workspace-kanban-filtered-drop-index'
 import {
@@ -8,7 +12,6 @@ import {
   shouldWriteManualOrderForGroupDrop,
   type WorktreeDragGroup
 } from './worktree-manual-order'
-import type { WorktreeMeta } from '../../../../shared/worktree/meta-types'
 import type { WorkspaceStatus, Worktree } from '../../../../shared/worktree/types'
 import type { WorktreeMetaBatchUpdate } from '../../store/slices/worktree-helpers'
 import type { WorktreeManualOrderCatalog } from './worktree-manual-order-catalog'
@@ -31,11 +34,13 @@ export function useWorkspaceKanbanWorktreeActions(args: {
   const recordInteraction = (): void => {
     useAppStore.getState().recordFeatureInteraction('workspace-board-actions')
   }
-  const getSourceStatusKeys = useCallback(
-    (worktreeIds: readonly string[]): WorkspaceStatus[] =>
+  const getSourceLaneKeys = useCallback(
+    (worktreeIds: readonly string[], laneKey: WorkspaceStatus): WorkspaceStatus[] =>
       worktreeIds.flatMap((worktreeId) => {
         const worktree = args.worktreeById.get(worktreeId)
-        return worktree ? [getWorkspaceStatus(worktree, args.workspaceStatuses)] : []
+        return worktree
+          ? [getWorkspaceBoardRowLaneKey(worktree, laneKey, args.workspaceStatuses)]
+          : []
       }),
     [args.workspaceStatuses, args.worktreeById]
   )
@@ -43,26 +48,36 @@ export function useWorkspaceKanbanWorktreeActions(args: {
     (worktreeIds: readonly string[], status: WorkspaceStatus): boolean =>
       shouldWriteManualOrderForGroupDrop({
         sortBy: args.sortBy,
-        sourceGroupKeys: getSourceStatusKeys(worktreeIds),
+        sourceGroupKeys: getSourceLaneKeys(worktreeIds, status),
         targetGroupKey: status
       }),
-    [args.sortBy, getSourceStatusKeys]
+    [args.sortBy, getSourceLaneKeys]
+  )
+  // Why: issue sync maps board statuses to tracker states; a priority lane has no such state.
+  const maybeSyncTaskStatuses = useCallback(
+    (worktreeIds: readonly string[], laneKey: WorkspaceStatus): void => {
+      if (isWorkspaceBoardStatusLane(laneKey)) {
+        args.maybeSyncTaskStatuses(worktreeIds, laneKey)
+      }
+    },
+    [args]
   )
   const moveWorktreeToStatus = useCallback(
     (worktreeId: string, status: WorkspaceStatus) => {
       const current = args.worktreeById.get(worktreeId)
-      if (!current || getWorkspaceStatus(current, args.workspaceStatuses) === status) {
+      const updates = current
+        ? getWorkspaceBoardLaneUpdate(current, status, args.workspaceStatuses)
+        : {}
+      if (!current || Object.keys(updates).length === 0) {
         return
       }
       recordInteraction()
-      void args.updateWorktreeMeta(
-        worktreeId,
-        { workspaceStatus: status },
-        { executionHostId: current.hostId ?? 'local' }
-      )
-      args.maybeSyncTaskStatuses([worktreeId], status)
+      void args.updateWorktreeMeta(worktreeId, updates, {
+        executionHostId: current.hostId ?? 'local'
+      })
+      maybeSyncTaskStatuses([worktreeId], status)
     },
-    [args]
+    [args, maybeSyncTaskStatuses]
   )
   const moveWorktreesToStatus = useCallback(
     (worktreeIds: readonly string[], status: WorkspaceStatus) => {
@@ -70,13 +85,16 @@ export function useWorkspaceKanbanWorktreeActions(args: {
       const changedIds: string[] = []
       for (const worktreeId of worktreeIds) {
         const current = args.worktreeById.get(worktreeId)
-        if (!current || getWorkspaceStatus(current, args.workspaceStatuses) === status) {
+        const laneUpdate = current
+          ? getWorkspaceBoardLaneUpdate(current, status, args.workspaceStatuses)
+          : {}
+        if (!current || Object.keys(laneUpdate).length === 0) {
           continue
         }
         changedIds.push(worktreeId)
         updates.push({
           worktreeId,
-          updates: { workspaceStatus: status },
+          updates: laneUpdate,
           executionHostId: current.hostId ?? 'local'
         })
       }
@@ -85,9 +103,9 @@ export function useWorkspaceKanbanWorktreeActions(args: {
       }
       recordInteraction()
       void args.updateWorktreesMeta(updates)
-      args.maybeSyncTaskStatuses(changedIds, status)
+      maybeSyncTaskStatuses(changedIds, status)
     },
-    [args]
+    [args, maybeSyncTaskStatuses]
   )
   const dropWorktreesInStatus = useCallback(
     (drop: {
@@ -115,13 +133,9 @@ export function useWorkspaceKanbanWorktreeActions(args: {
         if (!current) {
           continue
         }
-        const next: Partial<WorktreeMeta> = {}
-        if (getWorkspaceStatus(current, args.workspaceStatuses) !== drop.status) {
-          next.workspaceStatus = drop.status
-        }
         updates.push({
           worktreeId,
-          updates: next,
+          updates: getWorkspaceBoardLaneUpdate(current, drop.status, args.workspaceStatuses),
           executionHostId: current.hostId ?? 'local'
         })
       }
@@ -149,9 +163,9 @@ export function useWorkspaceKanbanWorktreeActions(args: {
       }
       recordInteraction()
       void args.updateWorktreesMeta(changed)
-      args.maybeSyncTaskStatuses(drop.worktreeIds, drop.status)
+      maybeSyncTaskStatuses(drop.worktreeIds, drop.status)
     },
-    [args, shouldWriteDropManualOrder]
+    [args, maybeSyncTaskStatuses, shouldWriteDropManualOrder]
   )
   const dropPointerDraggedWorktreesInStatus = useCallback(
     (drop: { worktreeIds: readonly string[]; status: WorkspaceStatus; dropIndex: number }) => {
