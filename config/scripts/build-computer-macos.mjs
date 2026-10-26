@@ -28,12 +28,28 @@ chmodSync(binaryPath, 0o755)
 createHelperApp()
 
 function buildUniversalBinary() {
+  const sliceDir = path.join(packagePath, '.build', 'universal-slices')
+  mkdirSync(sliceDir, { recursive: true })
   const builtBinaries = universalTriples.map((triple) => {
-    run('swift', ['build', '-c', 'release', '--package-path', packagePath, '--triple', triple])
-    return path.join(packagePath, '.build', triple, 'release', 'orca-computer-use-macos')
+    const buildArgs = ['build', '-c', 'release', '--package-path', packagePath, '--triple', triple]
+    run('swift', buildArgs)
+    // Why: Swift 6.4's default swiftbuild engine writes every triple to one bin path, so each
+    // slice must be copied out before the next triple's build overwrites it.
+    const slicePath = path.join(sliceDir, `orca-computer-use-macos-${triple}`)
+    copyFileSync(path.join(swiftBinPath(buildArgs), 'orca-computer-use-macos'), slicePath)
+    return slicePath
   })
   mkdirSync(path.dirname(binaryPath), { recursive: true })
   run('lipo', ['-create', ...builtBinaries, '-output', binaryPath])
+}
+
+function swiftBinPath(buildArgs) {
+  const result = spawnSync('swift', [...buildArgs, '--show-bin-path'], { encoding: 'utf8' })
+  if (result.status !== 0) {
+    process.stderr.write(result.stderr ?? '')
+    process.exit(result.status ?? 1)
+  }
+  return result.stdout.trim()
 }
 
 function createHelperApp() {
