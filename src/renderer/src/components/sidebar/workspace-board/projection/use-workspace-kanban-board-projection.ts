@@ -11,6 +11,7 @@ import {
   getWorktreeHostIdentity
 } from '../../../../../../shared/worktree/host-qualified-identity'
 import type { WorkspaceStatusDefinition, Worktree } from '../../../../../../shared/worktree/types'
+import type { WorkspaceBoardColumns } from '../../../../../../shared/workspace-board-columns'
 import type { ExecutionHostId } from '../../../../../../shared/execution-host'
 import type { WorktreeDragGroup } from '../../worktree-list/drag/worktree-manual-order'
 import type { useRepoMap } from '@/store/selectors'
@@ -23,6 +24,8 @@ export function useWorkspaceKanbanBoardProjection(args: {
   repoMap: ReturnType<typeof useRepoMap>
   sortBy: ReturnType<typeof useAppStore.getState>['sortBy']
   workspaceStatuses: readonly WorkspaceStatusDefinition[]
+  columns: WorkspaceBoardColumns
+  lanes: readonly WorkspaceStatusDefinition[]
 }) {
   const visibleWorktreeIds = useVisibleWorkspaceKanbanWorktreeIds({
     allWorktrees: args.allWorktrees,
@@ -34,9 +37,10 @@ export function useWorkspaceKanbanBoardProjection(args: {
         worktrees: args.allWorktrees,
         visibleWorktreeIds,
         workspaceStatuses: args.workspaceStatuses,
+        columns: args.columns,
         sortBy: args.sortBy
       }),
-    [args.allWorktrees, args.sortBy, args.workspaceStatuses, visibleWorktreeIds]
+    [args.allWorktrees, args.columns, args.sortBy, args.workspaceStatuses, visibleWorktreeIds]
   )
   const worktreeById = useMemo(
     () => buildUnambiguousWorktreeIdIndex(args.allWorktrees),
@@ -49,17 +53,17 @@ export function useWorkspaceKanbanBoardProjection(args: {
     [args.allWorktrees]
   )
   const boardWorktrees = useMemo(
-    () => args.workspaceStatuses.flatMap((status) => worktreesByStatus.get(status.id) ?? []),
-    [args.workspaceStatuses, worktreesByStatus]
+    () => args.lanes.flatMap((lane) => worktreesByStatus.get(lane.id) ?? []),
+    [args.lanes, worktreesByStatus]
   )
   // Lane members are host identities, as in the sidebar's drag groups.
   const boardDragGroups = useMemo<WorktreeDragGroup[]>(
     () =>
-      args.workspaceStatuses.map((status) => ({
-        key: status.id,
-        worktreeIds: (worktreesByStatus.get(status.id) ?? []).map(getWorktreeHostIdentity)
+      args.lanes.map((lane) => ({
+        key: lane.id,
+        worktreeIds: (worktreesByStatus.get(lane.id) ?? []).map(getWorktreeHostIdentity)
       })),
-    [args.workspaceStatuses, worktreesByStatus]
+    [args.lanes, worktreesByStatus]
   )
   useLayoutEffect(() => {
     if (!args.open) {

@@ -1,10 +1,11 @@
 import { launchDraftSource } from '@/components/native-chat/native-chat-launch-draft-source'
 import { assertWorkspaceAttachmentWriteCapability } from '../../runtime/runtime-workspace-attachment-capabilities'
-import { getWorkspaceAttachments } from '../../../../shared/workspace-attachments/workspace-attachments'
 import type { StateCreator } from 'zustand'
 import type { AppState } from '../types'
 import type { FolderWorkspace } from '../../../../shared/folder-workspaces/folder-workspace-types'
 import { WORKTREE_LINKED_WORK_ITEM_CONTEXT_RUNTIME_CAPABILITY } from '../../../../shared/protocol-version'
+import { assertPriorityWriteSupported } from '../../runtime/runtime-workspace-priority-capability'
+import { withLinkedItemsBase } from './folder-workspace-linked-items-base'
 import {
   assertRuntimeEnvironmentCapability,
   callRuntimeRpc
@@ -134,20 +135,7 @@ export function createFolderWorkspaceMutationActions(
           workspace.id === folderWorkspaceId &&
           getFolderWorkspaceHostId(workspace, state.projectGroups) === ownerHostId
       )
-      if (
-        updates.linkedItems !== undefined &&
-        updates.linkedItemsBase === undefined &&
-        sourceWorkspace
-      ) {
-        updates = {
-          ...updates,
-          linkedItemsBase: getWorkspaceAttachments({
-            linkedItems: sourceWorkspace.linkedItems,
-            linkedWorkItem: sourceWorkspace.linkedTask,
-            linkedTaskSourceContext: sourceWorkspace.linkedTaskSourceContext
-          })
-        }
-      }
+      updates = withLinkedItemsBase(updates, sourceWorkspace)
       const updateIdentity = getFolderWorkspaceUpdateIdentity(ownerHostId, folderWorkspaceId)
       if (target.kind === 'environment' && updates.linkedItems !== undefined) {
         await assertWorkspaceAttachmentWriteCapability(target, updates)
@@ -163,6 +151,9 @@ export function createFolderWorkspaceMutationActions(
           WORKTREE_LINKED_WORK_ITEM_CONTEXT_RUNTIME_CAPABILITY,
           'Update the remote runtime to link Jira'
         )
+      }
+      if (updates.priority !== undefined) {
+        await assertPriorityWriteSupported(target, updates)
       }
       const updateTicket = folderWorkspaceUpdates.begin(
         updateIdentity,

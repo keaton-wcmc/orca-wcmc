@@ -42,6 +42,9 @@ export const WORKTREE_VISIBILITY_SOURCE_DEFAULTS_RUNTIME_CAPABILITY =
 // Capable clients wait for deletion and display removing rows. Legacy clients receive acceptance early, so hosts hide those rows to avoid showing them as normal workspaces.
 export const WORKTREE_BACKGROUND_REMOVAL_RUNTIME_CAPABILITY =
   'worktree.background-removal.v1' as const
+// Why: worktree.set and folderWorkspace.update parse in strip mode, so an older host would drop a
+// priority write and report success.
+export const WORKTREE_PRIORITY_RUNTIME_CAPABILITY = 'worktree.priority.v1' as const
 
 // Hosts that record another owner's verified automation run on the workspaces it creates there.
 export const WORKTREE_CLIENT_AUTOMATION_PROVENANCE_RUNTIME_CAPABILITY =
@@ -87,5 +90,6 @@ export const WORKTREE_RUNTIME_CAPABILITIES = [
   WORKTREE_VISIBILITY_DEFAULTS_RUNTIME_CAPABILITY,
   WORKTREE_VISIBILITY_SOURCE_DEFAULTS_RUNTIME_CAPABILITY,
   WORKTREE_CLIENT_AUTOMATION_PROVENANCE_RUNTIME_CAPABILITY,
-  WORKTREE_CROSS_STORE_LINEAGE_RUNTIME_CAPABILITY
+  WORKTREE_CROSS_STORE_LINEAGE_RUNTIME_CAPABILITY,
+  WORKTREE_PRIORITY_RUNTIME_CAPABILITY
 ] as const

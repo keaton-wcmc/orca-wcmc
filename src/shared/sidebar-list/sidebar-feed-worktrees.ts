@@ -11,6 +11,7 @@ import type { CrossStoreWorkspaceLineage, WorktreeLineage } from '../worktree/li
 import type { Worktree } from '../worktree/types'
 import type { PairedServerWorkspaceRow } from './paired-server-rows'
 import type { WorkspaceRow } from './workspace-rows'
+import { workspacePriorityField } from '../workspace-priority'
 
 /** What the filters read off a row that the host decided, not the reader (workspace-kinds.ts). */
 export type SidebarFeedRowFacts = Partial<
@@ -46,6 +47,7 @@ type FeedRowFields = Pick<
       | 'lineage'
       | 'crossStoreParent'
       | 'workspaceStatus'
+      | 'priority'
       | 'sortOrder'
       | 'manualOrder'
       | 'createdAt'
@@ -99,6 +101,7 @@ function readFeedRow(
     isPinned: row.isPinned,
     isUnread: row.isUnread ?? false,
     workspaceStatus: row.workspaceStatus,
+    ...workspacePriorityField(row),
     sortOrder: row.sortOrder ?? 0,
     ...(row.manualOrder !== undefined ? { manualOrder: row.manualOrder } : {}),
     ...(row.createdAt !== undefined ? { createdAt: row.createdAt } : {}),
@@ -152,6 +155,7 @@ function folderWorkspaceOf(
     sortOrder: worktree.sortOrder,
     ...(worktree.manualOrder !== undefined ? { manualOrder: worktree.manualOrder } : {}),
     workspaceStatus: worktree.workspaceStatus,
+    ...workspacePriorityField(worktree),
     lastActivityAt: worktree.lastActivityAt,
     ...(worktree.smartTier !== undefined
       ? { smartTier: worktree.smartTier, smartAt: worktree.smartAt }

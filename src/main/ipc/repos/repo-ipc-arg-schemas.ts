@@ -5,6 +5,7 @@ import { WorkspaceLinkedItemSchema } from '../../../shared/workspace-attachments
 import { WorkspaceAttachmentsSchema } from '../../../shared/workspace-attachments/workspace-attachment-schema'
 import { isWorkspaceLinkedItemSourceContextMatch } from '../../../shared/workspace-attachments/workspace-linked-item-source-context'
 import { DiffCommentSchema } from '../../../shared/diff-comment-schema'
+import { WorkspacePriorityUpdateSchema } from '../../../shared/workspace-priority-schema'
 import { normalizeExecutionHostId } from '../../../shared/execution-host'
 
 export const ProjectGroupCreateArgs = z.object({
@@ -171,6 +172,7 @@ export const FolderWorkspaceUpdateArgs = z.object({
       sortOrder: z.number().finite().optional(),
       manualOrder: z.number().finite().optional(),
       workspaceStatus: z.string().optional(),
+      priority: WorkspacePriorityUpdateSchema,
       createdWithAgent: z.string().refine(isTuiAgent).optional(),
       pendingFirstAgentMessageRename: z.boolean().optional(),
       firstAgentMessageRenameError: z.string().nullable().optional(),

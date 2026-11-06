@@ -58,6 +58,7 @@
                 },
                 { "el": "RuntimeHostMark", "when": "host.kind == 'runtime'" },
                 { "el": "RepoChip", "when": "vars.inlineRepo" },
+                { "el": "Priority", "when": "ws.priority != null" },
                 {
                   "el": "Title",
                   "props": { "dimWhenRead": "=vars.newStyle", "tooltip": "=!vars.hoverDetails" }

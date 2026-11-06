@@ -1,4 +1,5 @@
 import type { SmartTier } from './sidebar-list/sort-stamps'
+import type { WorkspacePriority } from './workspace-priority'
 import type {
   AgentStatusState,
   AgentType,
@@ -86,6 +87,8 @@ export type RuntimeWorktreePsSummary = {
   crossStoreParent?: CrossStoreWorkspaceLineage
   displayName: string
   workspaceStatus: string
+  /** Absent when untriaged or from an older host. */
+  priority?: WorkspacePriority
   sortOrder: number
   manualOrder?: number
   lastActivityAt?: number

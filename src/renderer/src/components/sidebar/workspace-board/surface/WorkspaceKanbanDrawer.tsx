@@ -26,6 +26,7 @@ import {
   useAllOfferedWorkspaceStatuses,
   useWorkspaceBoardStatuses
 } from '../../workspace-status/presentation/use-workspace-board-statuses'
+import { getWorkspaceBoardLanes } from '../projection/workspace-board-lanes'
 
 type WorkspaceKanbanDrawerProps = {
   leftSidebarStyle?: React.CSSProperties
@@ -67,6 +68,12 @@ function WorkspaceKanbanDrawerContent({
   const localWorkspaceStatuses = useAppStore((s) => s.workspaceStatuses)
   const boardStatuses = useWorkspaceBoardStatuses()
   const offeredStatuses = useAllOfferedWorkspaceStatuses()
+  const workspaceBoardColumns = useAppStore((s) => s.workspaceBoardColumns)
+  const setWorkspaceBoardColumns = useAppStore((s) => s.setWorkspaceBoardColumns)
+  const boardLanes = useMemo(
+    () => getWorkspaceBoardLanes(workspaceBoardColumns, boardStatuses),
+    [workspaceBoardColumns, boardStatuses]
+  )
   const setWorkspaceStatuses = useAppStore((s) => s.setWorkspaceStatuses)
   const syncTaskStatusFromWorkspaceBoard = useAppStore((s) => s.syncTaskStatusFromWorkspaceBoard)
   const setSyncTaskStatusFromWorkspaceBoard = useAppStore(
@@ -103,7 +110,9 @@ function WorkspaceKanbanDrawerContent({
     open,
     repoMap,
     sortBy,
-    workspaceStatuses: boardStatuses
+    workspaceStatuses: boardStatuses,
+    columns: workspaceBoardColumns,
+    lanes: boardLanes
   })
   const {
     selectedWorktreeIds,
@@ -265,6 +274,8 @@ function WorkspaceKanbanDrawerContent({
         totalCount: boardWorktrees.length,
         onQueryChange: setQuery,
         onClearQuery: clearQuery,
+        columns: workspaceBoardColumns,
+        onColumnsChange: setWorkspaceBoardColumns,
         workspaceStatuses: localWorkspaceStatuses,
         syncTaskStatusFromWorkspaceBoard,
         onSyncTaskStatusFromWorkspaceBoardChange: setSyncTaskStatusFromWorkspaceBoard,
@@ -279,7 +290,7 @@ function WorkspaceKanbanDrawerContent({
       }}
       laneGridProps={{
         laneScrollerRef,
-        statuses: boardStatuses,
+        statuses: boardLanes,
         laneViews,
         laneFullWorktreeIds,
         hasQuery,
@@ -298,7 +309,7 @@ function WorkspaceKanbanDrawerContent({
         onSelectionGesture: updateSelectionForGesture,
         onContextMenuSelect: selectRenderedForContextMenu,
         onAssignWorkspaceStatus: moveWorktreesToStatus,
-        onCreateWorktree: createWorktreeForStatus,
+        onCreateWorktree: workspaceBoardColumns === 'status' ? createWorktreeForStatus : undefined,
         onColumnResizeStart,
         onColumnResizeKeyDown
       }}

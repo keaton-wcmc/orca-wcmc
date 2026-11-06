@@ -35,7 +35,7 @@ import { isEventTargetInsideCurrentTarget } from '../../workspace-card/controlle
 import { translate } from '@/i18n/i18n'
 import { useOptionalShortcutLabel } from '@/hooks/useShortcutLabel'
 import type { WorktreeContextMenuModel } from './use-worktree-context-menu-model'
-import { WorktreeStatusMenuItems } from '../../workspace-status/presentation/WorktreeStatusMenuItems'
+import { WorktreeStatusAndPriorityMenuItems } from './WorktreeStatusAndPriorityMenuItems'
 import { WorktreeWslHostStartMenuItem } from '../../workspace-card/host/WorktreeWslHostStartMenuItem'
 import { WorktreeContextMenuOverlays } from './WorktreeContextMenuOverlays'
 import {
@@ -55,7 +55,6 @@ export default function WorktreeContextMenuView({ model }: { model: WorktreeCont
     contentClassName,
     contextDeletePending,
     contextMenuOpenedAtRef,
-    contextWorkspaceStatus,
     deleteLabel,
     deletingContext,
     deletingSubtree,
@@ -63,7 +62,6 @@ export default function WorktreeContextMenuView({ model }: { model: WorktreeCont
     eligibleParentCount,
     effectiveSelectedWorktrees,
     folderWorkspaceId,
-    handleAssignWorkspaceStatus,
     handleCloseAutoFocus,
     handleCloseTerminals,
     handleCopyName,
@@ -101,8 +99,7 @@ export default function WorktreeContextMenuView({ model }: { model: WorktreeCont
     subtreeSleepableWorktrees,
     suppressOpeningPointerEvent,
     validParentWorktreeId,
-    worktree,
-    workspaceStatuses
+    worktree
   } = model
   const deleteShortcut = useOptionalShortcutLabel('workspace.delete')
   return (
@@ -167,13 +164,7 @@ export default function WorktreeContextMenuView({ model }: { model: WorktreeCont
               {translate('auto.components.sidebar.WorktreeContextMenu.439fa94d53', 'Update')}
             </DropdownMenuItem>
           )}
-          <WorktreeStatusMenuItems
-            contextWorkspaceStatus={contextWorkspaceStatus}
-            deletingContext={deletingContext}
-            isMultiContext={isMultiContext}
-            onAssignWorkspaceStatus={handleAssignWorkspaceStatus}
-            workspaceStatuses={workspaceStatuses}
-          />
+          <WorktreeStatusAndPriorityMenuItems model={model} />
           <DropdownMenuSeparator />
           {!isMultiContext && (
             <>

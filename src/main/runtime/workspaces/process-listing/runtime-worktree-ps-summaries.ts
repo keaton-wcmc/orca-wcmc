@@ -1,6 +1,7 @@
 import { ORCA_SIDEBAR_INPUTS_IS_MAIN } from '../../../../shared/sidebar-inputs-switch'
 import type { Worktree } from '../../../../shared/worktree/types'
 import { DEFAULT_WORKSPACE_STATUS_ID } from '../../../../shared/workspace-statuses'
+import { workspacePriorityField } from '../../../../shared/workspace-priority'
 import { worktreeWorkspaceKey } from '../../../../shared/workspace-scope'
 import type { RuntimeWorktreePsSummary } from '../../../../shared/runtime-worktree-contracts'
 import { folderWorkspaceToWorktree } from '../../../../shared/folder-workspaces/folder-workspace-worktree'
@@ -71,6 +72,8 @@ export function buildRuntimeWorktreePsSummaries(args: {
       ...(crossStoreParent ? { crossStoreParent } : {}),
       displayName: worktree.displayName,
       workspaceStatus: meta?.workspaceStatus ?? DEFAULT_WORKSPACE_STATUS_ID,
+      ...workspacePriorityField(meta ?? {}),
+      ...workspacePriorityField(meta ?? {}),
       sortOrder: meta?.sortOrder ?? 0,
       ...(meta?.manualOrder !== undefined ? { manualOrder: meta.manualOrder } : {}),
       lastActivityAt: worktree.lastActivityAt,
@@ -121,6 +124,8 @@ export function buildRuntimeWorktreePsSummaries(args: {
       childWorktreeIds: [],
       displayName: worktree.displayName,
       workspaceStatus: worktree.workspaceStatus ?? DEFAULT_WORKSPACE_STATUS_ID,
+      ...workspacePriorityField(worktree),
+      ...workspacePriorityField(worktree),
       sortOrder: worktree.sortOrder ?? 0,
       ...(worktree.manualOrder !== undefined ? { manualOrder: worktree.manualOrder } : {}),
       lastActivityAt: worktree.lastActivityAt,

@@ -15,6 +15,7 @@ import { WorkspaceLinkedItemSchema } from '../workspace-attachments/workspace-li
 import { WorkspaceAttachmentsSchema } from '../workspace-attachments/workspace-attachment-schema'
 import { DiffCommentSchema, MobileDiffReviewSchema } from '../diff-comment-schema'
 import { TaskSourceContextSchema } from '../task-source-context-schema'
+import { WorkspacePriorityUpdateSchema } from '../workspace-priority-schema'
 import { isWorkspaceLinkedItemSourceContextMatch } from '../workspace-attachments/workspace-linked-item-source-context'
 import { CrossStoreParentRefSchema } from './cross-store-parent-params'
 
@@ -181,6 +182,7 @@ export const WorktreeSet = WorktreeSelector.extend({
   sparsePresetId: OptionalString,
   baseRef: OptionalString,
   workspaceStatus: OptionalString,
+  priority: WorkspacePriorityUpdateSchema,
   pushTarget: z
     .object({
       remoteName: z.string(),

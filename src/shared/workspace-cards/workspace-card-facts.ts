@@ -45,6 +45,8 @@ export type WorkspaceCardFacts = {
     /** The title is being edited inline. */
     isRenaming: boolean
     hasRenameError: boolean
+    /** `urgent`, `high`, `medium` or `low`; null when untriaged. */
+    priority: 'urgent' | 'high' | 'medium' | 'low' | null
     removalError: string | null
     comment: string
   }

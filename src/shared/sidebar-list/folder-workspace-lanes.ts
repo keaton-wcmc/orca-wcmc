@@ -2,6 +2,7 @@ import type { FolderWorkspace } from '../folder-workspaces/folder-workspace-type
 import type { ProjectGroup } from '../project-group-types'
 import type { WorkspaceStatusDefinition } from '../worktree/types'
 import { getWorkspaceStatus, getWorkspaceStatusGroupKey } from '../workspace-statuses'
+import { getWorkspacePriority, getWorkspacePriorityGroupKey } from '../workspace-priority'
 import { ALL_GROUP_KEY, getPRLaneKey } from './group-keys'
 import { compareCodePoints, compareSidebarText } from './text-order'
 import type { WorktreeGroupBy } from './row-types'
@@ -39,6 +40,8 @@ export function getFolderWorkspaceLaneKey(
   switch (groupBy) {
     case 'workspace-status':
       return getWorkspaceStatusGroupKey(getWorkspaceStatus(pair.folderWorkspace, workspaceStatuses))
+    case 'priority':
+      return getWorkspacePriorityGroupKey(getWorkspacePriority(pair.folderWorkspace))
     case 'pr-status':
       // Folders cannot resolve a PR; match worktrees without one in the in-progress lane.
       return getPRLaneKey('in-progress')

@@ -14,6 +14,7 @@ import {
   WORKTREE_LINKED_WORK_ITEM_CONTEXT_RUNTIME_CAPABILITY
 } from '../../../../../../shared/protocol-version'
 import { toRuntimeWorktreeSelector } from '../../../../runtime/runtime-worktree-selector'
+import { assertPriorityWriteSupported } from '../../../../runtime/runtime-workspace-priority-capability'
 import { translate } from '@/i18n/i18n'
 import type { RuntimeClientTarget } from '../../../../../../shared/runtime-client-target'
 import type { WorktreeMeta } from '../../../../../../shared/worktree/meta-types'
@@ -132,6 +133,9 @@ async function persistWorktreeMetaUntracked(
         'Update the remote runtime to link Linear issues'
       )
     )
+  }
+  if (updates.priority !== undefined) {
+    await assertPriorityWriteSupported(target, updates)
   }
   let compatibleUpdates = updates
   const legacySelection = getLegacyWorkspaceReviewSelectionUpdates(updates)

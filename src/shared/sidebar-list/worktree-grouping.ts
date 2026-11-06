@@ -4,6 +4,11 @@ import type { WorkspaceStatusDefinition, Worktree } from '../worktree/types'
 import { getWorktreeHostIdentity } from '../worktree/host-qualified-identity'
 import { getWorkspaceStatus, getWorkspaceStatusGroupKey } from '../workspace-statuses'
 import {
+  WORKSPACE_PRIORITY_LANES,
+  getWorkspacePriority,
+  getWorkspacePriorityGroupKey
+} from '../workspace-priority'
+import {
   compareFolderWorkspacesForDisplay,
   getFolderWorkspaceLaneKey,
   type RenderableFolderWorkspace
@@ -83,7 +88,9 @@ export function buildOrderedGroups(args: {
     const key =
       groupBy === 'workspace-status'
         ? getWorkspaceStatusGroupKey(getWorkspaceStatus(w, workspaceStatuses))
-        : getPRLaneKey(prGroupOf(w))
+        : groupBy === 'priority'
+          ? getWorkspacePriorityGroupKey(getWorkspacePriority(w))
+          : getPRLaneKey(prGroupOf(w))
     if (!grouped.has(key)) {
       grouped.set(key, { label: '', items: [], repo: undefined, repoIds: new Set() })
     }
@@ -124,6 +131,14 @@ export function buildOrderedGroups(args: {
     // Status grouping is opt-in; omit empty sidebar lanes while the board keeps all drag targets.
     for (const status of workspaceStatuses) {
       const key = getWorkspaceStatusGroupKey(status.id)
+      const group = grouped.get(key)
+      if (group) {
+        orderedGroups.push([key, group])
+      }
+    }
+  } else if (groupBy === 'priority') {
+    for (const priority of WORKSPACE_PRIORITY_LANES) {
+      const key = getWorkspacePriorityGroupKey(priority)
       const group = grouped.get(key)
       if (group) {
         orderedGroups.push([key, group])

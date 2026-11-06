@@ -10,6 +10,7 @@ import { composeWorktreeHostIdentity } from '../worktree/host-qualified-identity
 import { normalizeWorkspaceCreatorProvenance } from '../workspace-creator-provenance'
 import { getWorkspaceAttachments } from '../workspace-attachments/workspace-attachments'
 import { normalizeWorkspaceAttachment } from '../workspace-attachments/workspace-attachment-normalization'
+import { workspacePriorityField } from '../workspace-priority'
 
 /** Folder Worktrees borrow repoId for their project group; it is never null, so absence cannot detect a non-Git workspace.
  * Keep prefix creation/recognition together to avoid drift. */
@@ -139,6 +140,7 @@ export function folderWorkspaceToWorktree(folderWorkspace: FolderWorkspace): Wor
     pendingFirstAgentMessageRename: folderWorkspace.pendingFirstAgentMessageRename,
     firstAgentMessageRenameError: folderWorkspace.firstAgentMessageRenameError,
     workspaceStatus: folderWorkspace.workspaceStatus,
+    ...workspacePriorityField(folderWorkspace),
     diffComments: folderWorkspace.diffComments,
     path: folderWorkspace.folderPath,
     head: '',

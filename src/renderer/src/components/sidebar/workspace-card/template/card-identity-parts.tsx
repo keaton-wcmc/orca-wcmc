@@ -7,6 +7,7 @@ import { TruncatedSidebarLabel } from '../../truncated-sidebar-label'
 import type { WorktreeCardController } from '../controller/use-worktree-card-controller'
 import {
   WorktreeCardDeleteQuickAction,
+  WorktreeCardPriorityMark,
   WorktreeCardPrimaryBadge,
   WorktreeCardPrimaryStar,
   WorktreeCardRenameErrorButton,
@@ -23,6 +24,7 @@ import { shouldBeginWorktreeRename } from '../controller/worktree-card-model'
 import { WorktreeCardSshHostControl } from '../host/WorktreeCardSshHostControl'
 import { WorktreeHostContextBadge } from '../host/WorktreeHostContextBadge'
 import { WorktreeTitleInlineRename } from '../identity/WorktreeTitleInlineRename'
+import { getWorkspacePriority } from '../../../../../../shared/workspace-priority'
 import { cardElement } from './card-template-compiler'
 
 type Card = WorktreeCardController
@@ -94,6 +96,10 @@ export const CARD_IDENTITY_PARTS = {
   RepoChip: part([], (_props, _children, { repo }) =>
     repo ? <WorktreeCardRepoChip repo={repo} /> : null
   ),
+  Priority: part([], (_props, _children, { worktree }) => {
+    const priority = getWorkspacePriority(worktree)
+    return priority ? <WorktreeCardPriorityMark priority={priority} /> : null
+  }),
   SshControl: part(['iconOnly'], (props, _children, card) => sshControl(props, card)),
   RuntimeHostMark: part([], (_props, _children, card) => (
     <WorktreeCardRuntimeHostMark

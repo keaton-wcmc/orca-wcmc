@@ -5,6 +5,7 @@ import type { DiffComment } from '../diff-comment-types'
 import type { SmartTier } from '../sidebar-list/sort-stamps'
 import type { OrcadRetainedMarker } from '../orcad-retained-marker'
 import type { ExternalConversationLink } from '../external-conversation-link'
+import type { WorkspacePriority } from '../workspace-priority'
 import type {
   WorkspaceCreatorProvenance,
   WorkspaceLinkedItem,
@@ -34,6 +35,8 @@ export type FolderWorkspace = {
   /** User-authored sidebar ordering. Higher values render earlier in Manual sort. */
   manualOrder?: number
   workspaceStatus?: WorkspaceStatus
+  /** See {@link Worktree.priority}. */
+  priority?: WorkspacePriority | null
   createdWithAgent?: TuiAgent
   pendingFirstAgentMessageRename?: boolean
   firstAgentMessageRenameError?: string | null

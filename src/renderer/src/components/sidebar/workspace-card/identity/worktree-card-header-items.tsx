@@ -8,6 +8,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { translate } from '@/i18n/i18n'
 import { cn } from '@/lib/utils'
 import type { Repo } from '../../../../../../shared/repo-types'
+import type { WorkspacePriority } from '../../../../../../shared/workspace-priority'
+import { WorkspacePriorityIcon, getWorkspacePriorityLabel } from '../../../workspace-priority-icon'
 import { resolveRepoHeaderColor } from '../../worktree-list/rows/project-header-color'
 import type { WorktreeCardController } from '../controller/use-worktree-card-controller'
 import { formatSparseDirectoryPreview } from '../controller/worktree-card-model'
@@ -41,6 +43,25 @@ export function WorktreeCardRepoChip({ repo }: { repo: Repo }): React.JSX.Elemen
       </TooltipTrigger>
       <TooltipContent side="right" sideOffset={8}>
         {repo.displayName}
+      </TooltipContent>
+    </Tooltip>
+  )
+}
+
+export function WorktreeCardPriorityMark({
+  priority
+}: {
+  priority: WorkspacePriority
+}): React.JSX.Element {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="inline-flex shrink-0 items-center text-muted-foreground">
+          <WorkspacePriorityIcon priority={priority} className="size-3.5" announce />
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="right" sideOffset={8}>
+        {getWorkspacePriorityLabel(priority)}
       </TooltipContent>
     </Tooltip>
   )

@@ -16,7 +16,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import WorkspaceKanbanLaneCardList from './WorkspaceKanbanLaneCardList'
 import { serializeWorkspaceLaneFullIds } from '../drag/workspace-kanban-filtered-drop-index'
 import { getWorktreeHostIdentity } from '../../../../../../shared/worktree/host-qualified-identity'
-import { getWorkspaceStatusVisualMeta } from '../../workspace-status/presentation/workspace-status'
+import { getWorkspaceBoardLaneVisualMeta } from '../projection/workspace-board-lanes'
 import { translate } from '@/i18n/i18n'
 import { useUiLanguageRevision } from '@/i18n/use-ui-language-revision'
 
@@ -46,7 +46,8 @@ type WorkspaceKanbanStatusLaneProps = {
     worktree: Worktree
   ) => readonly Worktree[]
   onAssignWorkspaceStatus?: (worktreeIds: readonly string[], status: WorkspaceStatus) => void
-  onCreateWorktree: (statusId: string) => void
+  /** Absent on priority columns: a new workspace has no priority to inherit from the lane. */
+  onCreateWorktree?: (statusId: string) => void
   onColumnResizeStart: (event: React.PointerEvent<HTMLElement>) => void
   onColumnResizeKeyDown: (event: React.KeyboardEvent<HTMLElement>) => void
 }
@@ -79,7 +80,7 @@ function WorkspaceKanbanStatusLane({
 }: WorkspaceKanbanStatusLaneProps): React.JSX.Element {
   useUiLanguageRevision()
   const laneScrollRef = useRef<HTMLDivElement | null>(null)
-  const meta = getWorkspaceStatusVisualMeta(status)
+  const meta = getWorkspaceBoardLaneVisualMeta(status)
   // Only filtered-away cards justify No matches; intrinsically empty lanes remain Empty.
   const laneTotalCount = totalCount ?? items.length
   const isFiltered = hasQuery && laneTotalCount > 0
@@ -105,7 +106,7 @@ function WorkspaceKanbanStatusLane({
       size="icon-xs"
       className="size-6 text-muted-foreground"
       aria-label={createTooltip}
-      onClick={() => onCreateWorktree(status.id)}
+      onClick={() => onCreateWorktree?.(status.id)}
     >
       <Plus className="size-3.5" />
     </Button>
@@ -171,12 +172,14 @@ function WorkspaceKanbanStatusLane({
             {isFiltered ? `${items.length} / ${laneTotalCount}` : items.length}
           </div>
         </div>
-        <Tooltip>
-          <TooltipTrigger asChild>{createButton}</TooltipTrigger>
-          <TooltipContent side="bottom" sideOffset={6}>
-            {createTooltip}
-          </TooltipContent>
-        </Tooltip>
+        {onCreateWorktree ? (
+          <Tooltip>
+            <TooltipTrigger asChild>{createButton}</TooltipTrigger>
+            <TooltipContent side="bottom" sideOffset={6}>
+              {createTooltip}
+            </TooltipContent>
+          </Tooltip>
+        ) : null}
       </div>
 
       <div
@@ -210,26 +213,28 @@ function WorkspaceKanbanStatusLane({
               : translate('auto.components.sidebar.WorkspaceKanbanStatusLane.8ad104642b', 'Empty')}
           </div>
         )}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              type="button"
-              variant="secondary"
-              size="xs"
-              className={cn(
-                'mt-2 h-7 w-full can-hover:opacity-0 transition-opacity',
-                'group-hover/lane:opacity-100 group-focus-within/lane:opacity-100'
-              )}
-              aria-label={createTooltip}
-              onClick={() => onCreateWorktree(status.id)}
-            >
-              <Plus className="size-3.5" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="top" sideOffset={6}>
-            {createTooltip}
-          </TooltipContent>
-        </Tooltip>
+        {onCreateWorktree ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="secondary"
+                size="xs"
+                className={cn(
+                  'mt-2 h-7 w-full can-hover:opacity-0 transition-opacity',
+                  'group-hover/lane:opacity-100 group-focus-within/lane:opacity-100'
+                )}
+                aria-label={createTooltip}
+                onClick={() => onCreateWorktree(status.id)}
+              >
+                <Plus className="size-3.5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top" sideOffset={6}>
+              {createTooltip}
+            </TooltipContent>
+          </Tooltip>
+        ) : null}
       </div>
     </section>
   )

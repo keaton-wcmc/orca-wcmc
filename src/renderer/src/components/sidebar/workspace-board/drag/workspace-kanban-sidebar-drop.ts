@@ -7,7 +7,7 @@ import {
   resolveFullLaneDropIndex
 } from './workspace-kanban-filtered-drop-index'
 import '../../workspace-status/presentation/workspace-status'
-import { getWorkspaceStatus } from '../../../../../../shared/workspace-statuses'
+import { getWorkspaceBoardRowLaneKey } from '../projection/workspace-board-lanes'
 import {
   collectDropWrites,
   uniqueDraggedKeys,
@@ -217,7 +217,9 @@ export function buildWorkspaceKanbanSidebarDropUpdates(args: {
   shouldSwitchToManual: boolean
 } {
   const sourceGroupKeys = args.worktreeIds.flatMap((worktreeId) =>
-    args.rowsFor.status(worktreeId).map((row) => getWorkspaceStatus(row, args.workspaceStatuses))
+    args.rowsFor
+      .status(worktreeId)
+      .map((row) => getWorkspaceBoardRowLaneKey(row, args.status, args.workspaceStatuses))
   )
   const writeManualOrder = shouldWriteManualOrderForGroupDrop({
     sortBy: args.sortBy,

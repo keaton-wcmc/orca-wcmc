@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import type { Repo } from '../../../shared/repo-types'
 import { DEFAULT_WORKSPACE_STATUS_ID } from '../../../shared/workspace-statuses'
+import { workspacePriorityField } from '../../../shared/workspace-priority'
 import {
   FOLDER_WORKSPACE_INSTANCE_SEPARATOR,
   getRepoMainWorktreeId
@@ -73,6 +74,7 @@ export function mergeFolderWorkspace(repo: Repo, worktreeId: string, meta: Workt
     ...(meta.cliProvenance !== undefined ? { cliProvenance: meta.cliProvenance } : {}),
     ...(meta.priorWorktreeIds !== undefined ? { priorWorktreeIds: meta.priorWorktreeIds } : {}),
     workspaceStatus: meta.workspaceStatus ?? DEFAULT_WORKSPACE_STATUS_ID,
+    ...workspacePriorityField(meta),
     diffComments: meta.diffComments,
     mobileDiffReview: meta.mobileDiffReview
   }

@@ -667,6 +667,7 @@
       "status": "Status",
       "pr": "PR",
       "project": "Project",
+      "priority": "Priority",
       "name": "Name",
       "agentActivitySort": "Agent Activity",
       "recent": "Recent",
@@ -1285,6 +1286,9 @@
     "workspaceDetailPlaceholder": {
       "title": "No workspace open",
       "description": "Pick a workspace from the sidebar to open its terminal here."
+    },
+    "workspacePriorityGlyph": {
+      "label": "Priority: {{level}}"
     },
     "worktreeListRow": {
       "folder": "Folder",

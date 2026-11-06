@@ -1,4 +1,5 @@
 import { getWorkspaceAttachments } from '../../../../../../shared/workspace-attachments/workspace-attachments'
+import { getWorkspacePriority } from '../../../../../../shared/workspace-priority'
 import type { WorktreeCardProperty } from '../../../../../../shared/ui-chrome-types'
 import type {
   WorkspaceCardFacts,
@@ -58,6 +59,7 @@ export function buildWorkspaceCardFacts(card: WorktreeCardController): Workspace
       hasRenameError:
         typeof worktree.firstAgentMessageRenameError === 'string' &&
         worktree.firstAgentMessageRenameError.length > 0,
+      priority: getWorkspacePriority(worktree),
       removalError: worktree.removalError || null,
       comment: worktree.comment
     },

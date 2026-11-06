@@ -26,6 +26,8 @@ import type {
   WorkspaceSortBy
 } from '../../../src/shared/workspace-view/workspace-view-options'
 import { hostSortsByStamps, sortWorktrees } from './workspace-list-ordering'
+import { bucketWorktreesByKey } from './bucket-worktrees-by-key'
+import { groupRowsByWorkspacePriority } from '../../../src/shared/workspace-priority'
 import { getWorktreeRowIdentity } from './worktree-host-row-identity'
 import { NO_WORKTREE_HOST_CONTEXT, resolveWorktreeHostId } from './worktree-host-context-labels'
 import type { WorktreeHostContextOf } from './worktree-host-context-labels'
@@ -247,16 +249,9 @@ export function buildMobileWorkspacePlan(
         }
       } else if (groupMode === 'workspace-status') {
         const renderableWorkspaceStatuses = withDefaultWorkspaceStatuses(workspaceStatuses)
-        const byStatus = new Map<string, Worktree[]>()
-        for (const w of canonicalGroupWorktrees) {
-          const key = getWorkspaceStatus(w, renderableWorkspaceStatuses)
-          const list = byStatus.get(key)
-          if (list) {
-            list.push(w)
-          } else {
-            byStatus.set(key, [w])
-          }
-        }
+        const byStatus = bucketWorktreesByKey(canonicalGroupWorktrees, (w) =>
+          getWorkspaceStatus(w, renderableWorkspaceStatuses)
+        )
         for (const status of renderableWorkspaceStatuses) {
           const items = byStatus.get(status.id)
           if (items && items.length > 0) {
@@ -270,17 +265,14 @@ export function buildMobileWorkspacePlan(
             )
           }
         }
-      } else if (groupMode === 'pr-status') {
-        const byGroup = new Map<string, Worktree[]>()
-        for (const w of canonicalGroupWorktrees) {
-          const key = prGroupOfPsLinkedPR(w.linkedPR)
-          const list = byGroup.get(key)
-          if (list) {
-            list.push(w)
-          } else {
-            byGroup.set(key, [w])
-          }
+      } else if (groupMode === 'priority') {
+        for (const lane of groupRowsByWorkspacePriority(canonicalGroupWorktrees)) {
+          sections.push(makeSection(lane.key, lane.label, lane.rows))
         }
+      } else if (groupMode === 'pr-status') {
+        const byGroup = bucketWorktreesByKey(canonicalGroupWorktrees, (w) =>
+          prGroupOfPsLinkedPR(w.linkedPR)
+        )
         for (const groupKey of PR_GROUP_ORDER) {
           const items = byGroup.get(groupKey)
           if (items && items.length > 0) {

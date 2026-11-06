@@ -4,6 +4,7 @@ import { shouldBeginWorktreeRename } from '../controller/worktree-card-model'
 import type { WorktreeCardPresentation } from './worktree-card-presentation'
 import {
   WorktreeCardDeleteQuickAction,
+  WorktreeCardPriorityMark,
   WorktreeCardPrimaryBadge,
   WorktreeCardPrimaryStar,
   WorktreeCardRenameErrorButton,
@@ -13,6 +14,7 @@ import {
 } from '../identity/worktree-card-header-items'
 import { WorktreeCardSshHostControl } from '../host/WorktreeCardSshHostControl'
 import { WorktreeTitleInlineRename } from '../identity/WorktreeTitleInlineRename'
+import { getWorkspacePriority } from '../../../../../../shared/workspace-priority'
 import type { WorktreeCardController } from '../controller/use-worktree-card-controller'
 
 export function WorktreeCardHeader({
@@ -60,6 +62,7 @@ export function WorktreeCardHeader({
     titleWrapper
   } = presentation
   const hasHoverDetails = presentation.hasHoverDetails && !titleRenaming
+  const priority = getWorkspacePriority(worktree)
 
   return (
     <div className="flex min-w-0 items-center justify-between gap-2">
@@ -86,6 +89,8 @@ export function WorktreeCardHeader({
         )}
 
         {showInlineRepoBadge && <WorktreeCardRepoChip repo={repo!} />}
+
+        {priority && <WorktreeCardPriorityMark priority={priority} />}
 
         <WorktreeTitleInlineRename
           displayName={visibleCardTitle}

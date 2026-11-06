@@ -22,6 +22,7 @@ import {
 import { smartSortPhase } from './smart-sort-phase'
 import { ORCA_SIDEBAR_INPUTS_IS_MAIN } from '../sidebar-inputs-switch'
 import { compareSmartStamps, recentStamp } from './stamp-order'
+import { compareWorkspacePriority } from '../workspace-priority'
 
 export type SortBy = WorkspaceSortBy
 
@@ -127,6 +128,8 @@ export function buildWorktreeComparator(
       return (
         // Lower class outranks higher.
         aw.cls - bw.cls ||
+        // Triage: the user's priority outranks how long a workspace has waited within a class.
+        compareWorkspacePriority(a, b) ||
         // Latest attention wins within a class.
         bw.attentionTimestamp - aw.attentionTimestamp ||
         // Idle falls back to recency/create grace before labels.

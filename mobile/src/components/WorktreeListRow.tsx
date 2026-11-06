@@ -19,7 +19,7 @@ import { AgentSpinner } from './AgentSpinner'
 import { HostKindIcon } from './HostKindIcon'
 import { MobileRepoIcon } from './MobileRepoIcon'
 import { WorktreeAgentList } from './WorktreeAgentList'
-import { WorktreeMetaGlyphs, prStateColor } from './WorktreeMetaGlyphs'
+import { WorkspacePriorityGlyph, WorktreeMetaGlyphs, prStateColor } from './WorktreeMetaGlyphs'
 import { WORKTREE_ROW_LAYOUT } from './worktree-list-row-layout'
 
 // Match desktop formatBranchName by hiding refs/heads/ prefix.
@@ -142,6 +142,7 @@ function WorktreeListRowComponent({
               <MobileRepoIcon repoIcon={repoIcon} size={11} color={repoColor} />
             </View>
           )}
+          <WorkspacePriorityGlyph row={item} />
           <Text
             style={[
               styles.worktreeName,

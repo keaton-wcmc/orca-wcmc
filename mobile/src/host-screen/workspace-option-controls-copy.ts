@@ -22,7 +22,8 @@ export const groupByChoices = (t: Translate) =>
     none: t('hostScreen.workspaceOptionControls.none', 'None'),
     'workspace-status': t('hostScreen.workspaceOptionControls.status', 'Status'),
     'pr-status': t('hostScreen.workspaceOptionControls.pr', 'PR'),
-    repo: t('hostScreen.workspaceOptionControls.project', 'Project')
+    repo: t('hostScreen.workspaceOptionControls.project', 'Project'),
+    priority: t('hostScreen.workspaceOptionControls.priority', 'Priority')
   })
 
 export const sortByChoices = (t: Translate) =>

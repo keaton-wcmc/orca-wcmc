@@ -3,6 +3,7 @@ import type { ExecutionHostId } from '../../../shared/execution-host'
 import { normalizeStoredTaskSourceContext } from '../../../shared/task-source-context'
 import { normalizeWorkspaceLinkedItem } from '../../../shared/workspace-attachments/workspace-linked-item'
 import { isWorkspaceLinkedItemSourceContextMatch } from '../../../shared/workspace-attachments/workspace-linked-item-source-context'
+import { storeWorkspacePriority } from '../../../shared/workspace-priority'
 import { DEFAULT_WORKSPACE_STATUS_ID } from '../../../shared/workspace-statuses'
 import type { WorktreeMeta } from '../../../shared/worktree/meta-types'
 import { WORKTREE_META_PERSISTED_DEFAULTS } from '../../../shared/worktree/meta-persisted-defaults'
@@ -60,6 +61,7 @@ export function mergeWorktreeMetaForWrite(
   )
     ? sourceContext
     : null
+  storeWorkspacePriority(updated, updated.priority)
   updated.instanceId ||= randomUUID()
   return updated
 }

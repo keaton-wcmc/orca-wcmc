@@ -8,6 +8,10 @@ import { getFolderWorkspaceHostId } from '../../../src/shared/sidebar-list/folde
 import type { HostSectionRow } from '../../../src/shared/sidebar-list/host-section-rows'
 import type { GroupHeaderRow } from '../../../src/shared/sidebar-list/row-types'
 import { PR_GROUP_LABELS } from '../../../src/shared/workspace-view/workspace-pr-groups'
+import {
+  getWorkspacePriorityEnglishLabel,
+  workspacePriorityField
+} from '../../../src/shared/workspace-priority'
 import type { Worktree as HostWorktree } from '../../../src/shared/worktree/types'
 import { composeWorktreeHostIdentity } from '../../../src/shared/worktree/host-qualified-identity'
 import type { Section, Worktree, WorktreeHostContextView } from '../worktree/workspace-list-types'
@@ -41,6 +45,8 @@ function headerTitle(row: GroupHeaderRow): string {
       return row.label ?? 'All'
     case 'pr-status':
       return row.label ?? PR_GROUP_LABELS[row.icon.prGroup]
+    case 'priority':
+      return row.label ?? getWorkspacePriorityEnglishLabel(row.icon.priority)
     case 'project':
     case 'workspace-status':
       return row.label ?? ''
@@ -89,7 +95,8 @@ function drawnRow(
     isArchived: worktree.isArchived,
     isMainWorktree: worktree.isMainWorktree,
     unread: worktree.isUnread,
-    isPinned: worktree.isPinned
+    isPinned: worktree.isPinned,
+    ...workspacePriorityField(worktree)
   }
 }
 

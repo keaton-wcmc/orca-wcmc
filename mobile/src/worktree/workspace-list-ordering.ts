@@ -27,7 +27,8 @@ function stampRow(worktree: Worktree): StampOrderRow {
     lastActivityAt: worktree.lastActivityAt,
     smartTier: worktree.smartTier,
     smartAt: worktree.smartAt,
-    isUnread: worktree.unread
+    isUnread: worktree.unread,
+    priority: worktree.priority
   }
 }
 

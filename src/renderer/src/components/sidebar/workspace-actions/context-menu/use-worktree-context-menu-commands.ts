@@ -20,6 +20,10 @@ import { formatClipboardFilePath } from '@/lib/clipboard-file-path'
 import { getWorktreeRowLocalPathOpenOwner } from '@/lib/worktree-row-open-in-owner'
 import { VIRTUALIZED_SCROLL_ANCHOR_RECORD_EVENT } from '@/hooks/useVirtualizedScrollAnchor'
 import {
+  getWorkspacePriority,
+  type WorkspacePriority
+} from '../../../../../../shared/workspace-priority'
+import {
   canCreateChildWorktree,
   planWorkspaceStatusAssignment,
   preserveDeleteSiblingPosition
@@ -150,6 +154,23 @@ export function useWorktreeContextMenuCommands(args: {
     },
     [args]
   )
+  const handleAssignPriority = useCallback(
+    (priority: WorkspacePriority | null) => {
+      args.setMenuOpenState(false)
+      void Promise.all(
+        args.activeContextWorktrees
+          .filter((worktree) => getWorkspacePriority(worktree) !== priority)
+          .map((worktree) =>
+            args.updateWorktreeMeta(
+              worktree.id,
+              { priority },
+              { executionHostId: worktree.hostId ?? 'local' }
+            )
+          )
+      )
+    },
+    [args]
+  )
   const handleRename = useCallback(() => {
     args.openModal('edit-meta', {
       worktreeId: args.worktree.id,
@@ -224,6 +245,7 @@ export function useWorktreeContextMenuCommands(args: {
       ...args,
       repo: resolveChildWorktreeRepository(args.getState().repos, args.worktree)
     }),
+    handleAssignPriority,
     handleAssignWorkspaceStatus,
     handleCloseTerminals,
     handleCopyName,
