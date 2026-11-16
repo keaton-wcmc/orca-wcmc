@@ -36,6 +36,7 @@ import { translate } from '@/i18n/i18n'
 import { useOptionalShortcutLabel } from '@/hooks/useShortcutLabel'
 import type { WorktreeContextMenuModel } from './use-worktree-context-menu-model'
 import { WorktreeStatusAndPriorityMenuItems } from './WorktreeStatusAndPriorityMenuItems'
+import { AddFollowUpMenuItem } from '../../../plan/AddFollowUpMenuItem'
 import { WorktreeWslHostStartMenuItem } from '../../workspace-card/host/WorktreeWslHostStartMenuItem'
 import { WorktreeContextMenuOverlays } from './WorktreeContextMenuOverlays'
 import {
@@ -165,6 +166,7 @@ export default function WorktreeContextMenuView({ model }: { model: WorktreeCont
             </DropdownMenuItem>
           )}
           <WorktreeStatusAndPriorityMenuItems model={model} />
+          {!isMultiContext && <AddFollowUpMenuItem worktree={worktree} disabled={isDeleting} />}
           <DropdownMenuSeparator />
           {!isMultiContext && (
             <>

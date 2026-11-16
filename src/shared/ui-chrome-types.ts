@@ -123,6 +123,7 @@ export type TopLevelView =
   | 'tasks'
   | 'activity'
   | 'automations'
+  | 'plan'
   | 'space'
   | 'skills'
   | 'artifacts'

@@ -14,6 +14,7 @@ import { TitlebarLeftControls } from './TitlebarLeftControls'
 import { RightSidebarToggle, TitlebarMainStrip } from './TitlebarMainStrip'
 import type { AppChromeLayout } from './use-app-chrome-layout'
 import type { FloatingWorkspacePanelState } from './use-floating-workspace-panel'
+import { AddFollowUpDialog } from '../components/plan/AddFollowUpDialog'
 
 // Skips the shell render each workspace switch causes; its props only change on toggle.
 const MemoFloatingTerminalToggleButton = memo(FloatingTerminalToggleButton)
@@ -33,6 +34,7 @@ const SkillsPage = lazy(() => import('../components/skills/SkillsPage'))
 const ArtifactsPage = lazy(() => import('../components/artifacts/ArtifactsPage'))
 const WorkspaceSpacePage = lazy(() => import('../components/workspace-space/WorkspaceSpacePage'))
 const MobilePage = lazy(() => import('../components/mobile/MobilePage'))
+const PlanPage = lazy(() => import('../components/plan/PlanPage'))
 const Terminal = lazy(() => import('../components/Terminal'))
 
 type WorktreeSidebarScrollRefs = {
@@ -94,6 +96,7 @@ function ActivePage({ layout }: { layout: AppChromeLayout }): React.JSX.Element 
       {activeView === 'artifacts' ? <ArtifactsPage /> : null}
       {activeView === 'tasks' ? <TaskPage /> : null}
       {activeView === 'automations' ? <AutomationsPage /> : null}
+      {activeView === 'plan' ? <PlanPage /> : null}
       {activeView === 'activity' ? <ActivityPrototypePage /> : null}
       {activeView === 'space' ? <WorkspaceSpacePage /> : null}
       {activeView === 'mobile' ? <MobilePage /> : null}
@@ -106,6 +109,7 @@ function ActivePage({ layout }: { layout: AppChromeLayout }): React.JSX.Element 
       {activeView === 'terminal' && !hasActiveWorktree && !creationLayoutActive ? (
         <Landing />
       ) : null}
+      <AddFollowUpDialog />
     </>
   )
 }

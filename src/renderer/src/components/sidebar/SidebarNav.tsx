@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { SetupGuideSidebarEntry } from './SetupGuideSidebarEntry'
 import { SidebarTaskNavButton } from './SidebarTaskNavButton'
+import { PlanSidebarNavButton } from '../plan/PlanSidebarNavButton'
 import { HideSidebarMenu } from './sidebar-nav-controls'
 import { translate } from '@/i18n/i18n'
 import { lazyWithRetry } from '@/lib/lazy-with-retry'
@@ -205,6 +206,7 @@ const SidebarNav = React.memo(function SidebarNav() {
           <HideSidebarMenu onHide={hideAutomationsButton} />
         </ContextMenu>
       ) : null}
+      <PlanSidebarNavButton />
       {showAgentDashboardButton ? (
         <React.Suspense fallback={null}>
           <AgentDashboardSidebarEntry />
