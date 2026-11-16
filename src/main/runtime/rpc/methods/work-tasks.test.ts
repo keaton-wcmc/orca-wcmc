@@ -4,7 +4,6 @@ import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { RUNTIME_CAPABILITIES } from '../../../../shared/protocol-version'
 import { WORK_TASKS_RUNTIME_CAPABILITY } from '../../../../shared/work-tasks/work-tasks-runtime-capability'
-import type { WorkTask } from '../../../../shared/work-tasks/work-task-types'
 import { FollowUpReminderService } from '../../../follow-up-reminders/follow-up-reminder-service'
 import { SlackWebhookSecret } from '../../../follow-up-reminders/slack-webhook-secret'
 import { setWorkTaskServices } from '../../../work-tasks/work-task-service-registry'
@@ -14,7 +13,7 @@ import { WORK_TASK_METHODS } from './work-tasks'
 
 vi.mock('electron', () => ({ safeStorage: {} }))
 
-// SAFETY: work-task handlers never read the RPC context.
+// oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: work-task handlers never read the RPC context.
 const context = {} as RpcContext
 
 async function call(name: string, params?: unknown): Promise<unknown> {
@@ -23,17 +22,18 @@ async function call(name: string, params?: unknown): Promise<unknown> {
     throw new Error(`unknown method ${name}`)
   }
   const parsed = method.params ? method.params.parse(params) : undefined
-  // SAFETY: each schema's parse output is exactly that method's handler input.
+  // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: each schema's parse output is exactly that method's handler input.
   return (method.handler as (p: unknown, c: RpcContext) => unknown)(parsed, context)
 }
 
 describe('work task RPC methods', () => {
   let dir: string
+  let store: WorkTaskStore
   const now = () => new Date('2026-11-16T09:00:00Z')
 
   beforeEach(() => {
     dir = mkdtempSync(join(tmpdir(), 'work-task-rpc-'))
-    const store = new WorkTaskStore(join(dir, 'work-tasks.json'), now)
+    store = new WorkTaskStore(join(dir, 'work-tasks.json'), now)
     const slackWebhook = new SlackWebhookSecret(join(dir, 'webhook.enc'), {
       isEncryptionAvailable: () => true,
       encryptString: (text) => Buffer.from(text),
@@ -54,22 +54,20 @@ describe('work task RPC methods', () => {
   it('lists follow-ups most urgent first', async () => {
     await call('workTask.create', { title: 'low', durationMin: 30, priority: 'low' })
     await call('workTask.create', { title: 'urgent', durationMin: 30, priority: 'urgent' })
-    const { tasks } = (await call('workTask.list')) as { tasks: WorkTask[] }
-    expect(tasks.map((task) => task.title)).toEqual(['urgent', 'low'])
+    expect(await call('workTask.list')).toMatchObject({
+      tasks: [{ title: 'urgent' }, { title: 'low' }]
+    })
   })
 
   it('snoozing re-arms a fired reminder', async () => {
-    const { task } = (await call('workTask.create', {
+    const task = store.create({
       title: 'chase',
       durationMin: 15,
       remind: { at: '2026-11-16T08:00:00Z', whenIdle: false, firedAt: '2026-11-16T08:00:00Z' }
-    })) as { task: WorkTask }
-    const snoozed = (await call('workTask.snooze', {
-      id: task.id,
-      until: '2026-11-17T09:00:00Z'
-    })) as { task: WorkTask }
-    expect(snoozed.task.state).toBe('snoozed')
-    expect(snoozed.task.remind).toEqual({ at: '2026-11-17T09:00:00.000Z', whenIdle: false })
+    })
+    await call('workTask.snooze', { id: task.id, until: '2026-11-17T09:00:00Z' })
+    expect(store.get(task.id)?.state).toBe('snoozed')
+    expect(store.get(task.id)?.remind).toEqual({ at: '2026-11-17T09:00:00.000Z', whenIdle: false })
   })
 
   it('rejects a webhook URL that is not Slack', async () => {

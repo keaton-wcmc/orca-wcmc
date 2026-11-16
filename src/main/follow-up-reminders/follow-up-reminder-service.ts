@@ -8,7 +8,7 @@ import type { SlackWebhookResult } from './slack-webhook-delivery'
 const DEFAULT_TICK_MS = 60_000
 
 export type FollowUpDelivery = {
-  notify: (title: string, body: string) => Promise<unknown> | unknown
+  notify: (title: string, body: string) => unknown
   /** Null when no webhook is configured. */
   slack: (text: string) => Promise<SlackWebhookResult | null>
   recordSlackError: (message: string | null) => void
@@ -80,7 +80,7 @@ export class FollowUpReminderService {
       return
     }
     // Claim before any await so an overlapping wake tick cannot deliver it twice.
-    store.update(task.id, { remind: { ...remind, firedAt: now.toISOString() } })
+    store.update(task.id, { state: 'open', remind: { ...remind, firedAt: now.toISOString() } })
 
     let activityUnchecked = false
     if (remind.whenIdle && task.link) {

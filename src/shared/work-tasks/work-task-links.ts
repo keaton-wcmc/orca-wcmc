@@ -43,7 +43,9 @@ export function workTaskLinkUrl(link: WorkTaskLink): string | null {
       return `https://${link.host}/${link.project}/-/merge_requests/${link.iid}`
     case 'slack':
       return link.url
-    default:
+    case 'worktree':
+    case 'folder':
+    case 'agent':
       return null
   }
 }

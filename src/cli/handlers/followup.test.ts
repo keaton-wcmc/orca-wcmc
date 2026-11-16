@@ -14,7 +14,7 @@ function fakeClient(): RuntimeClient {
         : {},
     _meta: { runtimeId: 'r' }
   }))
-  // SAFETY: the draft builder only uses call(), which this fake implements.
+  // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: the draft builder only uses call(), which this fake implements.
   return { call } as unknown as RuntimeClient
 }
 

@@ -53,6 +53,13 @@ describe('FollowUpReminderService', () => {
     expect(store.get(task.id)?.remind?.firedAt).toBe('2026-11-16T09:00:00.000Z')
   })
 
+  it('reopens a snoozed follow-up when it fires', async () => {
+    const task = remindAt('2026-11-16T09:00:00Z')
+    store.update(task.id, { state: 'snoozed' })
+    await service().tick()
+    expect(store.get(task.id)?.state).toBe('open')
+  })
+
   it('fires a reminder missed while asleep once, labelled overdue', async () => {
     remindAt('2026-11-16T03:00:00Z')
     const reminders = service()
