@@ -12,6 +12,7 @@ import { MobileHomeJumpBackIn } from '../MobileHomeJumpBackIn'
 import { MobileHomeTasksSection } from '../MobileHomeTasksSection'
 import type { MobileHomeData } from '../use-mobile-home-data'
 import { MobileHomeTabHeader } from './MobileHomeTabHeader'
+import { MobileFollowUpSection } from '../../follow-ups/MobileFollowUpSection'
 
 /** Home's first tab: agents to get back to, the desktops, and Tasks. */
 export function MobileHomeFeedTab(props: {
@@ -51,6 +52,7 @@ export function MobileHomeFeedTab(props: {
           isWideLayout && { maxWidth: contentMaxWidth, width: '100%', alignSelf: 'center' }
         ]}
       >
+        <MobileFollowUpSection connectedHosts={data.connectedHosts} />
         <MobileHomeJumpBackIn
           rows={data.jumpBackInRows}
           hosts={data.sortedHostCatalog}
