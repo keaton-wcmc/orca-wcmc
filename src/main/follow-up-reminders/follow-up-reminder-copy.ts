@@ -1,21 +1,7 @@
-import type { WorkTask, WorkTaskLink } from '../../shared/work-tasks/work-task-types'
+import { describeWorkTaskLink } from '../../shared/work-tasks/work-task-links'
+import type { WorkTask } from '../../shared/work-tasks/work-task-types'
 
 const OVERDUE_AFTER_MS = 2 * 60_000
-
-export function describeWorkTaskLink(link: WorkTaskLink): string {
-  switch (link.kind) {
-    case 'worktree':
-    case 'folder':
-    case 'agent':
-      return link.label
-    case 'pr':
-      return `${link.repo}#${link.number}`
-    case 'mr':
-      return `${link.project}!${link.iid}`
-    case 'slack':
-      return 'Slack thread'
-  }
-}
 
 export function followUpNotificationText(
   task: WorkTask,

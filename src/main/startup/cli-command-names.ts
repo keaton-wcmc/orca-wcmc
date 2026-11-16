@@ -32,6 +32,7 @@ export const CLI_COMMAND_NAMES = [
   'fill',
   'find',
   'focus',
+  'followup',
   'forward',
   'full-screenshot',
   'geolocation',

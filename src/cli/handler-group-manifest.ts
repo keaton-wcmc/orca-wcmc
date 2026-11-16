@@ -64,6 +64,11 @@ export const HANDLER_GROUPS: readonly HandlerGroup[] = [
     load: async () => (await import('./handlers/automations.js')).AUTOMATION_HANDLERS
   },
   {
+    name: 'followup',
+    keys: ['followup add', 'followup ls', 'followup snooze', 'followup done', 'followup rm'],
+    load: async () => (await import('./handlers/followup.js')).FOLLOWUP_HANDLERS
+  },
+  {
     name: 'project',
     keys: [
       'project list',
