@@ -696,6 +696,13 @@ import {
   UsageCredentialSessionCookieParams
 } from './usage-credentials-params'
 import { CancelUsageLimitContinueParams } from './usage-limit-continue-params'
+import {
+  WorkTaskCreate,
+  WorkTaskDone,
+  WorkTaskSlackWebhookSet,
+  WorkTaskSnooze,
+  WorkTaskUpdate
+} from './work-task-params'
 import { LayoutReopenHeldPanesParams } from './workspace-layout-held-panes-params'
 import {
   LayoutApplyParams,
@@ -1554,6 +1561,16 @@ export const RPC_PARAMS_BY_METHOD = {
   'updater.download': null,
   'updater.getStatus': null,
   'updater.install': null,
+  'workTask.create': WorkTaskCreate,
+  'workTask.done': WorkTaskDone,
+  'workTask.list': null,
+  'workTask.remove': WorkTaskDone,
+  'workTask.slackWebhook.clear': null,
+  'workTask.slackWebhook.set': WorkTaskSlackWebhookSet,
+  'workTask.slackWebhook.status': null,
+  'workTask.slackWebhook.test': null,
+  'workTask.snooze': WorkTaskSnooze,
+  'workTask.update': WorkTaskUpdate,
   'workspacePorts.kill': WorkspacePortKillParams,
   'workspacePorts.killHost': WorkspacePortKillHostParams,
   'workspacePorts.probePage': WorkspacePortProbePageParams,
