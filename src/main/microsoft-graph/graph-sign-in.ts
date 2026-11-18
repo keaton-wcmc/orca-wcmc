@@ -16,7 +16,7 @@ const PAGE = (message: string) =>
   `<!doctype html><meta charset="utf-8"><title>Orca</title><body style="font-family:system-ui;padding:3rem">${message}</body>`
 
 export type LoopbackSignInDeps = {
-  openBrowser: (url: string) => Promise<unknown> | unknown
+  openBrowser: (url: string) => unknown
   fetchImpl?: typeof fetch
   now?: () => number
   timeoutMs?: number

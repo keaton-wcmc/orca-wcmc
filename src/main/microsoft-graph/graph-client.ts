@@ -34,6 +34,7 @@ export const graphTodoTaskSchema = z.object({
   title: z.string().optional(),
   status: z.string(),
   reminderDateTime: graphDateTime.nullable().optional(),
+  body: z.object({ content: z.string().optional() }).optional(),
   lastModifiedDateTime: z.string().optional()
 })
 export type GraphTodoTask = z.infer<typeof graphTodoTaskSchema>

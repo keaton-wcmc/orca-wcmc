@@ -5,6 +5,7 @@ import {
   workTaskSchema,
   type WorkTask,
   type WorkTaskDraft,
+  type WorkTaskOutlook,
   type WorkTaskResolution,
   type WorkTaskState
 } from '../../shared/work-tasks/work-task-types'
@@ -14,6 +15,7 @@ export type WorkTaskStoreReadState = { ok: true } | { ok: false; error: 'unreada
 export type WorkTaskPatch = Partial<WorkTaskDraft> & {
   state?: WorkTaskState
   resolution?: WorkTaskResolution
+  outlook?: WorkTaskOutlook
 }
 
 export class WorkTaskStoreUnreadableError extends Error {

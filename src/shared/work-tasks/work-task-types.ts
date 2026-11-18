@@ -31,6 +31,11 @@ export const workTaskReminderSchema = z.object({
   firedAt: isoTime.optional()
 })
 
+export const workTaskOutlookSchema = z.object({
+  todoTaskId: z.string().min(1),
+  remindAt: isoTime.optional()
+})
+
 export const workTaskResolutionSchema = z.object({
   at: isoTime,
   reason: z.literal('link-moved')
@@ -73,6 +78,7 @@ export const workTaskSchema = z
     id: nonEmpty,
     state: z.enum(['open', 'snoozed', 'done']),
     resolution: workTaskResolutionSchema.optional(),
+    outlook: workTaskOutlookSchema.optional(),
     createdAt: isoTime,
     updatedAt: isoTime
   })
@@ -81,6 +87,7 @@ export const workTaskSchema = z
 export type WorkTaskLink = z.infer<typeof workTaskLinkSchema>
 export type WorkTaskReminder = z.infer<typeof workTaskReminderSchema>
 export type WorkTaskResolution = z.infer<typeof workTaskResolutionSchema>
+export type WorkTaskOutlook = z.infer<typeof workTaskOutlookSchema>
 export type WorkTask = z.infer<typeof workTaskSchema>
 export type WorkTaskState = WorkTask['state']
 export type WorkTaskDraft = z.infer<typeof workTaskDraftSchema>
