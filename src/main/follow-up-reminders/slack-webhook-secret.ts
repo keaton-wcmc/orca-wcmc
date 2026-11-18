@@ -1,8 +1,9 @@
-import { existsSync, readFileSync, rmSync } from 'node:fs'
-import { guardedSafeStorage } from '../host/safe-storage-availability'
-import { writeSecureFile } from '../../shared/secure-file'
+import { z } from 'zod'
+import { SealedJsonFile, type SecretCipher } from '../microsoft-graph/sealed-json-file'
 
 const SLACK_WEBHOOK_PREFIX = 'https://hooks.slack.com/'
+
+export type { SecretCipher }
 
 export type SlackWebhookStatus = {
   configured: boolean
@@ -10,46 +11,29 @@ export type SlackWebhookStatus = {
   lastError?: string
 }
 
-export type SecretCipher = Pick<
-  typeof guardedSafeStorage,
-  'isEncryptionAvailable' | 'encryptString' | 'decryptString'
->
-
 /** The follow-up Slack webhook URL, sealed by the OS keychain; never stored in plaintext. */
 export class SlackWebhookSecret {
-  private readonly filePath: string
-  private readonly cipher: SecretCipher
+  private readonly file: SealedJsonFile<string>
   private lastError: string | undefined
 
-  constructor(filePath: string, cipher: SecretCipher = guardedSafeStorage) {
-    this.filePath = filePath
-    this.cipher = cipher
+  constructor(filePath: string, cipher?: SecretCipher) {
+    this.file = new SealedJsonFile(filePath, z.string(), 'Slack webhook', cipher)
   }
 
   read(): string | null {
-    if (!existsSync(this.filePath) || !this.cipher.isEncryptionAvailable()) {
-      return null
-    }
-    try {
-      return this.cipher.decryptString(Buffer.from(readFileSync(this.filePath, 'utf8'), 'base64'))
-    } catch {
-      return null
-    }
+    return this.file.read()
   }
 
   write(url: string): void {
     if (!url.startsWith(SLACK_WEBHOOK_PREFIX)) {
       throw new Error(`A Slack incoming webhook URL starts with ${SLACK_WEBHOOK_PREFIX}`)
     }
-    if (!this.cipher.isEncryptionAvailable()) {
-      throw new Error('The OS keychain is unavailable, so the Slack webhook cannot be stored')
-    }
-    writeSecureFile(this.filePath, this.cipher.encryptString(url).toString('base64'))
+    this.file.write(url)
     this.lastError = undefined
   }
 
   clear(): void {
-    rmSync(this.filePath, { force: true })
+    this.file.clear()
     this.lastError = undefined
   }
 
@@ -59,8 +43,8 @@ export class SlackWebhookSecret {
 
   status(): SlackWebhookStatus {
     return {
-      configured: existsSync(this.filePath),
-      encryptionAvailable: this.cipher.isEncryptionAvailable(),
+      configured: this.file.exists(),
+      encryptionAvailable: this.file.encryptionAvailable(),
       ...(this.lastError ? { lastError: this.lastError } : {})
     }
   }
