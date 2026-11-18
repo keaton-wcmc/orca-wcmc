@@ -6,6 +6,7 @@ import { SESSION_TERMINAL_SCROLLBACK_METHODS } from './session-terminal-scrollba
 import { AI_VAULT_METHODS } from './ai-vault'
 import { AUTOMATION_METHODS } from './automations'
 import { WORK_TASK_METHODS } from './work-tasks'
+import { WORK_TASK_MICROSOFT_METHODS } from './work-task-microsoft-methods'
 import { REPO_METHODS } from './repo'
 import { WORKTREE_METHODS } from './worktree'
 import { REFERENCE_METHODS } from './reference'
@@ -91,6 +92,7 @@ export const ALL_RPC_METHODS = [
   ...ARTIFACT_METHODS,
   ...AUTOMATION_METHODS,
   ...WORK_TASK_METHODS,
+  ...WORK_TASK_MICROSOFT_METHODS,
   ...REPO_METHODS,
   ...WORKTREE_METHODS,
   ...REFERENCE_METHODS,

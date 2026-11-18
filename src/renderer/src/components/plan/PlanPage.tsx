@@ -7,6 +7,7 @@ import { translate } from '@/i18n/i18n'
 import { useAppStore } from '@/store'
 import { useAddFollowUpDialog } from './add-follow-up-dialog-store'
 import { PlanFollowUpRow } from './PlanFollowUpRow'
+import { PlanMicrosoftSettings } from './PlanMicrosoftSettings'
 import { PlanSlackSettings } from './PlanSlackSettings'
 import { useWorkTasks, type UseWorkTasks } from './use-work-tasks'
 
@@ -115,6 +116,7 @@ export default function PlanPage(): React.JSX.Element {
             model={model}
           />
         ) : null}
+        <PlanMicrosoftSettings />
         <PlanSlackSettings />
       </div>
     </main>

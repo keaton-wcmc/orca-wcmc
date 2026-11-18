@@ -16,6 +16,24 @@ export type SlackWebhookStatus = {
   lastError?: string
 }
 
+export type MicrosoftStatus = {
+  configured: boolean
+  config?: { clientId: string; tenantId: string }
+  state: 'disconnected' | 'connected' | 'reconnect-required'
+  account?: string
+  lastError?: string
+  lastMirrorAt?: string
+}
+
+export type CalendarInterval = { start: string; end: string; subject?: string }
+
+export type CalendarDay = {
+  busy: CalendarInterval[]
+  orcaWindows: CalendarInterval[]
+  freeMinutesInWindows: number
+  fetchedAt: string
+}
+
 export const workTasksClient = {
   list: () => callRuntimeRpc<WorkTaskListResult>(LOCAL, 'workTask.list'),
   create: (draft: WorkTaskDraft) =>
@@ -28,6 +46,18 @@ export const workTasksClient = {
   setSlack: (url: string) =>
     callRuntimeRpc<SlackWebhookStatus>(LOCAL, 'workTask.slackWebhook.set', { url }),
   clearSlack: () => callRuntimeRpc<SlackWebhookStatus>(LOCAL, 'workTask.slackWebhook.clear'),
+  microsoftStatus: () => callRuntimeRpc<MicrosoftStatus>(LOCAL, 'workTask.microsoft.status'),
+  configureMicrosoft: (config: { clientId: string; tenantId: string }) =>
+    callRuntimeRpc<MicrosoftStatus>(LOCAL, 'workTask.microsoft.configure', config),
+  // Sign-in waits on the browser, so allow the full five minutes.
+  connectMicrosoft: () =>
+    callRuntimeRpc<MicrosoftStatus>(LOCAL, 'workTask.microsoft.connect', undefined, {
+      timeoutMs: 5 * 60_000 + 10_000
+    }),
+  disconnectMicrosoft: () =>
+    callRuntimeRpc<MicrosoftStatus>(LOCAL, 'workTask.microsoft.disconnect'),
+  calendarToday: (refresh = false) =>
+    callRuntimeRpc<{ day: CalendarDay | null }>(LOCAL, 'workTask.calendar.today', { refresh }),
   testSlack: () =>
     callRuntimeRpc<{ ok: boolean; error?: string }>(LOCAL, 'workTask.slackWebhook.test')
 }

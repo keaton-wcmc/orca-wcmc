@@ -1,11 +1,14 @@
 import { join } from 'node:path'
-import { app, powerMonitor } from 'electron'
+import { app, powerMonitor, shell } from 'electron'
 import { getWorkspacePriority } from '../../shared/workspace-priority'
 import type { LinkedPriorityLookup } from '../../shared/work-tasks/work-task-order'
 import { FollowUpReminderService } from '../follow-up-reminders/follow-up-reminder-service'
 import { postSlackWebhook } from '../follow-up-reminders/slack-webhook-delivery'
 import { SlackWebhookSecret } from '../follow-up-reminders/slack-webhook-secret'
 import type { Store } from '../persistence/loading-store/store'
+import { GraphTokenStore } from '../microsoft-graph/graph-token-store'
+import { MicrosoftGraphConfigFile } from '../microsoft-graph/microsoft-graph-config'
+import { MicrosoftIntegration } from '../microsoft-graph/microsoft-integration'
 import { WorkTaskStore } from '../work-tasks/work-task-store'
 import { setWorkTaskServices } from '../work-tasks/work-task-service-registry'
 import { mainProcessState as state } from './main-process-state'
@@ -38,15 +41,27 @@ export function initializeMainProcessWorkTasks(): void {
       return () => powerMonitor.off('resume', listener)
     }
   })
+  const microsoft = new MicrosoftIntegration({
+    config: new MicrosoftGraphConfigFile(join(userData, 'microsoft-graph.json')),
+    tokens: new GraphTokenStore(join(userData, 'microsoft-graph-tokens.enc')),
+    store: tasks,
+    openBrowser: (url) => shell.openExternal(url),
+    now
+  })
   setWorkTaskServices({
     store: tasks,
     reminders,
     slackWebhook,
+    microsoft,
     linkedPriority: linkedPriorityFromStore(store),
     now
   })
   reminders.start()
-  app.once('will-quit', () => reminders.stop())
+  microsoft.start()
+  app.once('will-quit', () => {
+    reminders.stop()
+    microsoft.stop()
+  })
 }
 
 function linkedPriorityFromStore(store: Store): LinkedPriorityLookup {

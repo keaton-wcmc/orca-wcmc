@@ -8,6 +8,10 @@ import { FollowUpReminderService } from '../../../follow-up-reminders/follow-up-
 import { SlackWebhookSecret } from '../../../follow-up-reminders/slack-webhook-secret'
 import { setWorkTaskServices } from '../../../work-tasks/work-task-service-registry'
 import { WorkTaskStore } from '../../../work-tasks/work-task-store'
+import { GraphTokenStore } from '../../../microsoft-graph/graph-token-store'
+import { MicrosoftGraphConfigFile } from '../../../microsoft-graph/microsoft-graph-config'
+import { MicrosoftIntegration } from '../../../microsoft-graph/microsoft-integration'
+import { WORK_TASK_MICROSOFT_METHODS } from './work-task-microsoft-methods'
 import type { RpcContext } from '../core'
 import { WORK_TASK_METHODS } from './work-tasks'
 
@@ -17,7 +21,9 @@ vi.mock('electron', () => ({ safeStorage: {} }))
 const context = {} as RpcContext
 
 async function call(name: string, params?: unknown): Promise<unknown> {
-  const method = WORK_TASK_METHODS.find((entry) => entry.name === name)
+  const method = [...WORK_TASK_METHODS, ...WORK_TASK_MICROSOFT_METHODS].find(
+    (entry) => entry.name === name
+  )
   if (!method) {
     throw new Error(`unknown method ${name}`)
   }
@@ -44,7 +50,27 @@ describe('work task RPC methods', () => {
       now,
       delivery: { notify: () => {}, slack: async () => null, recordSlackError: () => {} }
     })
-    setWorkTaskServices({ store, reminders, slackWebhook, linkedPriority: () => undefined, now })
+    const microsoft = new MicrosoftIntegration({
+      config: new MicrosoftGraphConfigFile(join(dir, 'microsoft-graph.json')),
+      tokens: new GraphTokenStore(join(dir, 'tokens.enc'), {
+        cipher: {
+          isEncryptionAvailable: () => true,
+          encryptString: Buffer.from,
+          decryptString: String
+        }
+      }),
+      store,
+      openBrowser: () => {},
+      now
+    })
+    setWorkTaskServices({
+      store,
+      reminders,
+      slackWebhook,
+      microsoft,
+      linkedPriority: () => undefined,
+      now
+    })
   })
   afterEach(() => {
     setWorkTaskServices(null)
@@ -79,6 +105,19 @@ describe('work task RPC methods', () => {
   it('says where follow-ups live when the desktop services are absent', async () => {
     setWorkTaskServices(null)
     await expect(call('workTask.list')).rejects.toThrow('Follow-ups live on the desktop app')
+  })
+
+  it('stores Microsoft ids, rejects non-GUIDs and reports disconnected until sign-in', async () => {
+    await expect(
+      call('workTask.microsoft.configure', { clientId: 'nope', tenantId: 'nope' })
+    ).rejects.toThrow('Expected a GUID')
+    expect(
+      await call('workTask.microsoft.configure', {
+        clientId: 'aeac42ee-9104-4dd6-9efc-a024538adf97',
+        tenantId: '2faab858-d1f4-48af-86f6-486196d5969d'
+      })
+    ).toMatchObject({ configured: true, state: 'disconnected' })
+    expect(await call('workTask.calendar.today', {})).toEqual({ day: null })
   })
 
   it('advertises the capability', () => {

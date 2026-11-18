@@ -36,6 +36,13 @@ export const WorkTaskSnooze = WorkTaskId.extend({
 export const WorkTaskDone = WorkTaskId
 export const WorkTaskRemove = WorkTaskId
 
+export const WorkTaskMicrosoftConfigure = z.object({
+  clientId: z.string().trim().min(1, 'Missing client id'),
+  tenantId: z.string().trim().min(1, 'Missing tenant id')
+})
+
+export const WorkTaskCalendarToday = z.object({ refresh: z.boolean().optional() })
+
 export const WorkTaskSlackWebhookSet = z.object({
   url: z.string().trim().min(1, 'Missing webhook URL')
 })

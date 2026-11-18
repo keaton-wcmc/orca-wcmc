@@ -697,8 +697,10 @@ import {
 } from './usage-credentials-params'
 import { CancelUsageLimitContinueParams } from './usage-limit-continue-params'
 import {
+  WorkTaskCalendarToday,
   WorkTaskCreate,
   WorkTaskDone,
+  WorkTaskMicrosoftConfigure,
   WorkTaskSlackWebhookSet,
   WorkTaskSnooze,
   WorkTaskUpdate
@@ -1561,9 +1563,14 @@ export const RPC_PARAMS_BY_METHOD = {
   'updater.download': null,
   'updater.getStatus': null,
   'updater.install': null,
+  'workTask.calendar.today': WorkTaskCalendarToday,
   'workTask.create': WorkTaskCreate,
   'workTask.done': WorkTaskDone,
   'workTask.list': null,
+  'workTask.microsoft.configure': WorkTaskMicrosoftConfigure,
+  'workTask.microsoft.connect': null,
+  'workTask.microsoft.disconnect': null,
+  'workTask.microsoft.status': null,
   'workTask.remove': WorkTaskDone,
   'workTask.slackWebhook.clear': null,
   'workTask.slackWebhook.set': WorkTaskSlackWebhookSet,
