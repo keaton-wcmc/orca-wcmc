@@ -4,6 +4,7 @@ import {
   shouldShowArtifactsButton,
   shouldShowAutomationsButton,
   shouldShowMobileButton,
+  shouldShowPlanButton,
   shouldShowSkillsButton
 } from '@/components/sidebar/chrome/SidebarNav'
 import { navigateFromRail } from './app-rail-navigation'
@@ -18,6 +19,7 @@ const DESTINATION_VISIBLE: Record<
 > = {
   tasks: (settings) => settings?.showTasksButton !== false,
   automations: shouldShowAutomationsButton,
+  plan: shouldShowPlanButton,
   artifacts: shouldShowArtifactsButton,
   skills: shouldShowSkillsButton,
   mobile: shouldShowMobileButton
@@ -28,12 +30,14 @@ const DESTINATION_SETTING: Record<
   AppRailDestinationId,
   | 'showTasksButton'
   | 'showAutomationsButton'
+  | 'showPlanButton'
   | 'showArtifactsButton'
   | 'showSkillsButton'
   | 'showMobileButton'
 > = {
   tasks: 'showTasksButton',
   automations: 'showAutomationsButton',
+  plan: 'showPlanButton',
   artifacts: 'showArtifactsButton',
   skills: 'showSkillsButton',
   mobile: 'showMobileButton'
@@ -47,6 +51,7 @@ export function setRailDestinationShown(id: AppRailDestinationId, shown: boolean
 const DESTINATION_OPEN: Record<AppRailDestinationId, (state: AppState) => void> = {
   tasks: (state) => state.openTaskPage(),
   automations: (state) => state.openAutomationsPage(),
+  plan: (state) => state.openPlanPage(),
   artifacts: (state) => state.openArtifactsPage(),
   skills: (state) => state.openSkillsPage(),
   mobile: (state) => state.openMobilePage()

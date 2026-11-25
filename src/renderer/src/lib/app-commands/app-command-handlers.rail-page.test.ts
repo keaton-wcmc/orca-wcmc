@@ -14,6 +14,7 @@ import { createAppCommandHandlers, type AppShortcutState } from './app-command-h
 const OPEN_PAGE: Record<(typeof APP_RAIL_DESTINATION_IDS)[number], (s: AppState) => void> = {
   tasks: (s) => s.openTaskPage(),
   automations: (s) => s.openAutomationsPage(),
+  plan: (s) => s.openPlanPage(),
   artifacts: (s) => s.openArtifactsPage(),
   skills: (s) => s.openSkillsPage(),
   mobile: (s) => s.openMobilePage()

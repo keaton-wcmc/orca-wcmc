@@ -1,5 +1,5 @@
 import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { BookOpen, CalendarClock, Files, Layers, List, Smartphone } from 'lucide-react'
+import { BookOpen, CalendarClock, Files, Layers, List, ListTodo, Smartphone } from 'lucide-react'
 import { useAppStore } from '@/store/index'
 import { useTranslate } from '@/i18n/use-translate'
 import { useHelpMenuController } from '@/components/sidebar/chrome/help-menu-controller'
@@ -193,6 +193,8 @@ export function AppRail({
         return t('auto.components.sidebar.SidebarNav.fee535205b', 'Tasks')
       case 'automations':
         return t('auto.components.sidebar.SidebarNav.f323383e9a', 'Automations')
+      case 'plan':
+        return t('auto.components.plan.PlanSidebarNavButton.label', 'Plan')
       case 'artifacts':
         return t('auto.components.sidebar.SidebarNav.artifacts', 'Artifacts')
       case 'skills':
@@ -213,6 +215,8 @@ export function AppRail({
         return <List {...props} />
       case 'automations':
         return <CalendarClock {...props} />
+      case 'plan':
+        return <ListTodo {...props} />
       case 'artifacts':
         return <Files {...props} />
       case 'skills':

@@ -27,6 +27,7 @@ import {
 } from './appearance-usage-percentage-search'
 
 import { LeftSidebarAppearanceSetting } from './LeftSidebarAppearanceSetting'
+import { PlanButtonSetting } from '../../plan/PlanButtonSetting'
 import { getStatusBarUsageFormatEntry } from './appearance-status-bar-usage-format-search'
 import { StatusBarUsageFormatSetting } from './StatusBarUsageFormatSetting'
 
@@ -311,6 +312,8 @@ export function AppearanceWindowSidebarSection({
                   }
                 />
               </SearchableSetting>
+
+              <PlanButtonSetting settings={settings} updateSettings={updateSettings} />
 
               <SearchableSetting
                 title={t(

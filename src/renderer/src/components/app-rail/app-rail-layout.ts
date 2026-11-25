@@ -21,6 +21,7 @@ export function selectAppRailWidth(state: AppRailSettingsState): number {
 export const APP_RAIL_DESTINATION_IDS = [
   'tasks',
   'automations',
+  'plan',
   'artifacts',
   'skills',
   'mobile'

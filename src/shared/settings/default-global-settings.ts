@@ -196,6 +196,7 @@ export function buildDefaultSettings(args: {
     orchestrationCoordinatorApprovalsEnabled: false,
     showArtifactsButton: false,
     showSkillsButton: false,
+    showPlanButton: true,
     showMobileButton: true,
     showPinnedWorktreesInGroups: false,
     ctrlTabOrderMode: 'mru',

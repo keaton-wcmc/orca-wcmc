@@ -258,6 +258,8 @@ export type GlobalSettings = GlobalSettingsBase & {
   showArtifactsButton?: boolean
   /** Only toggles the sidebar shortcut; Skills stay reachable from Settings. */
   showSkillsButton?: boolean
+  /** Fork: the Plan page's sidebar and rail button. */
+  showPlanButton?: boolean
   /** Only toggles the sidebar shortcut; Orca Mobile stays reachable from Settings. */
   showMobileButton?: boolean
   /** Pinned workspaces show in one sidebar location by default; opt in to also show them in their natural groups. */

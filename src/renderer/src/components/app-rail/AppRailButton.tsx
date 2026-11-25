@@ -11,6 +11,7 @@ const APP_RAIL_ITEM_IDS = [
   'workspaces',
   'tasks',
   'automations',
+  'plan',
   'artifacts',
   'skills',
   'mobile',

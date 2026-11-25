@@ -37,6 +37,12 @@ export function shouldShowArtifactsButton(
   return settings?.showArtifactsButton === true
 }
 
+export function shouldShowPlanButton(
+  settings: Partial<Pick<GlobalSettings, 'showPlanButton'>> | null | undefined
+): boolean {
+  return settings?.showPlanButton !== false
+}
+
 export function shouldShowSkillsButton(
   settings: Partial<Pick<GlobalSettings, 'showSkillsButton'>> | null | undefined
 ): boolean {
@@ -74,6 +80,7 @@ const SidebarNav = React.memo(function SidebarNav() {
   const automationsActive = activeView === 'automations'
   // With the experimental rail on, Tasks, Automations, Artifacts, Skills and Orca Mobile live on the rail instead.
   const appRailVisible = useAppStore(selectAppRailVisible)
+  const showPlanButton = useAppStore((s) => shouldShowPlanButton(s.settings))
   const mobileActive = activeView === 'mobile'
   const artifactsActive = activeView === 'artifacts'
   const skillsActive = activeView === 'skills'
@@ -219,7 +226,7 @@ const SidebarNav = React.memo(function SidebarNav() {
           <HideSidebarMenu onHide={hideAutomationsButton} />
         </ContextMenu>
       ) : null}
-      <PlanSidebarNavButton />
+      {showPlanButton && !appRailVisible ? <PlanSidebarNavButton /> : null}
       {showAgentDashboardButton ? (
         <React.Suspense fallback={null}>
           <AgentDashboardSidebarEntry />
