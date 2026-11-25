@@ -1,7 +1,7 @@
 import React from 'react'
 import { ListTodo } from 'lucide-react'
 import { translate } from '@/i18n/i18n'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import { useAppStore } from '@/store'
 import { useWorkTasks } from './use-work-tasks'
 

@@ -1,6 +1,6 @@
 import React, { useMemo, useRef } from 'react'
 import { Plus } from 'lucide-react'
-import type { Repo } from '../../../../../../shared/repo-types'
+import type { Repo } from '../../../../../../shared/repository/repo-types'
 import type {
   WorkspaceStatus,
   WorkspaceStatusDefinition,
@@ -9,15 +9,15 @@ import type {
 import {
   WORKSPACE_BOARD_COLUMN_WIDTH_MAX,
   WORKSPACE_BOARD_COLUMN_WIDTH_MIN
-} from '../../../../../../shared/workspace-statuses'
-import { cn } from '@/lib/utils'
+} from '../../../../../../shared/workspace/status/workspace-statuses'
+import { cn } from '@/lib/class-names'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import WorkspaceKanbanLaneCardList from './WorkspaceKanbanLaneCardList'
 import { serializeWorkspaceLaneFullIds } from '../drag/workspace-kanban-filtered-drop-index'
 import { getWorktreeHostIdentity } from '../../../../../../shared/worktree/host-qualified-identity'
 import { getWorkspaceBoardLaneVisualMeta } from '../projection/workspace-board-lanes'
-import { translate } from '@/i18n/i18n'
+import { useTranslate } from '@/i18n/use-translate'
 import { useUiLanguageRevision } from '@/i18n/use-ui-language-revision'
 
 type WorkspaceKanbanStatusLaneProps = {
@@ -78,9 +78,10 @@ function WorkspaceKanbanStatusLane({
   onColumnResizeStart,
   onColumnResizeKeyDown
 }: WorkspaceKanbanStatusLaneProps): React.JSX.Element {
+  const t = useTranslate()
   useUiLanguageRevision()
   const laneScrollRef = useRef<HTMLDivElement | null>(null)
-  const meta = getWorkspaceBoardLaneVisualMeta(status)
+  const meta = getWorkspaceBoardLaneVisualMeta(status, t)
   // Only filtered-away cards justify No matches; intrinsically empty lanes remain Empty.
   const laneTotalCount = totalCount ?? items.length
   const isFiltered = hasQuery && laneTotalCount > 0
@@ -94,7 +95,7 @@ function WorkspaceKanbanStatusLane({
       undefined
     )
   }, [fullWorktreeIds, hasQuery, items])
-  const createTooltip = translate(
+  const createTooltip = t(
     'auto.components.sidebar.WorkspaceKanbanStatusLane.newWorkspaceIn',
     'New workspace in {{status}}',
     { status: status.label }
@@ -137,7 +138,7 @@ function WorkspaceKanbanStatusLane({
         data-workspace-board-column-resize-handle=""
         role="separator"
         aria-orientation="vertical"
-        aria-label={translate(
+        aria-label={t(
           'auto.components.sidebar.WorkspaceKanbanStatusLane.3611d1ae7f',
           'Resize workspace board columns'
         )}
@@ -206,11 +207,8 @@ function WorkspaceKanbanStatusLane({
         ) : (
           <div className="flex h-20 items-center justify-center rounded-md border border-dashed border-border/70 text-[11px] text-muted-foreground">
             {isFiltered
-              ? translate(
-                  'auto.components.sidebar.WorkspaceKanbanStatusLane.2df01a03ff',
-                  'No matches'
-                )
-              : translate('auto.components.sidebar.WorkspaceKanbanStatusLane.8ad104642b', 'Empty')}
+              ? t('auto.components.sidebar.WorkspaceKanbanStatusLane.2df01a03ff', 'No matches')
+              : t('auto.components.sidebar.WorkspaceKanbanStatusLane.8ad104642b', 'Empty')}
           </div>
         )}
         {onCreateWorktree ? (

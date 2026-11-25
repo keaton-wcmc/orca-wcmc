@@ -3,8 +3,8 @@ import { isFollowUpAwaitingUser } from '../../../src/shared/work-tasks/work-task
 import type { WorkTask } from '../../../src/shared/work-tasks/work-task-types'
 import { workTaskSchema } from '../../../src/shared/work-tasks/work-task-types'
 import { WORK_TASKS_RUNTIME_CAPABILITY } from '../../../src/shared/work-tasks/work-tasks-runtime-capability'
-import { bindDeferredRpcOperation, defineRpcOperation } from '../transport/rpc-operation'
-import { rpcResultVariant } from '../transport/rpc-operation-result-reader'
+import { bindDeferredRpcOperation, defineRpcOperation } from '../transport/rpc/rpc-operation'
+import { rpcResultVariant } from '../transport/rpc/rpc-operation-result-reader'
 
 // Rows from a newer desktop that this phone cannot parse are dropped, not fatal.
 const followUpListSchema = z.object({

@@ -1,5 +1,5 @@
-import type { CommandSpec } from '../args'
-import { GLOBAL_FLAGS } from '../args'
+import type { CommandSpec } from '../discovery/command-spec'
+import { CLI_GLOBAL_FLAGS as GLOBAL_FLAGS } from '../../shared/cli/cli-argument-boundary'
 
 const TIME_NOTE = 'Times accept +30m, +2h, +1d, tomorrow, tomorrow 14:00, mon..sun, or an ISO date.'
 

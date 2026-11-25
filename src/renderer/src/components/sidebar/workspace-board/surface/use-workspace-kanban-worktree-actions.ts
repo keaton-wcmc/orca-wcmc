@@ -1,11 +1,11 @@
-import { useCallback } from 'react'
-import { useAppStore } from '@/store'
-import '../../workspace-status/presentation/workspace-status'
 import {
   getWorkspaceBoardLaneUpdate,
   getWorkspaceBoardRowLaneKey,
   isWorkspaceBoardStatusLane
 } from '../projection/workspace-board-lanes'
+import { useCallback } from 'react'
+import { useAppStore } from '@/store'
+import '../../workspace-status/presentation/workspace-status'
 import { switchSortToManualAfterDrop } from '../../worktree-list/listing/manual-sort-switch-toast'
 import { resolveFullLaneDropIndex } from '../drag/workspace-kanban-filtered-drop-index'
 import {
@@ -18,9 +18,9 @@ import type {
   WorkspaceStatusDefinition,
   Worktree
 } from '../../../../../../shared/worktree/types'
-import type { WorktreeMetaBatchUpdate } from '../../../../store/slices/worktree-helpers'
+import type { WorktreeMetaBatchUpdate } from '../../../../store/slices/worktrees/metadata/worktree-meta-update-options'
 import type { WorktreeManualOrderCatalog } from '../../worktree-list/drag/worktree-manual-order-catalog'
-import { isWorkspaceStatusAllowedOnHost } from '@/store/host-workspace-status-columns'
+import { isWorkspaceStatusAllowedOnHost } from '@/store/workspaces/status/host-workspace-status-columns'
 import { getWorktreeHostIdentity } from '../../../../../../shared/worktree/host-qualified-identity'
 
 type LaneView = { items: readonly Worktree[] }

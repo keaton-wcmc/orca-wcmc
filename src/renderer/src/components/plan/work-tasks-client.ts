@@ -1,5 +1,5 @@
 import type { WorkTask, WorkTaskDraft } from '../../../../shared/work-tasks/work-task-types'
-import { callRuntimeRpc } from '@/runtime/runtime-rpc-client'
+import { callRuntimeRpc } from '@/runtime/rpc/calls/runtime-rpc-call'
 
 // Follow-ups live on this desktop, so every call targets the local runtime.
 const LOCAL = { kind: 'local' } as const

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import type { WorkTask } from '../../../../shared/work-tasks/work-task-types'
 
-vi.mock('@/runtime/runtime-rpc-client', () => ({ callRuntimeRpc: vi.fn() }))
+vi.mock('@/runtime/rpc/calls/runtime-rpc-call', () => ({ callRuntimeRpc: vi.fn() }))
 
 const { countDueFollowUps } = await import('./use-work-tasks')
 const { linkFromUrl } = await import('./AddFollowUpDialog')

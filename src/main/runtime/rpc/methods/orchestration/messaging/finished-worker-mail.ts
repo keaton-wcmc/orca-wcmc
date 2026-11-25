@@ -1,11 +1,11 @@
-import type { OrchestrationDb } from '../../../../orchestration/db'
-import type { OrchestrationCallerIdentity } from '../../../../orchestration/orchestration-caller-identity'
-import type { DispatchContextRow } from '../../../../orchestration/types'
-import { dispatchReportMailbox } from '../../../../orchestration/dispatch-report-mailbox'
-import { reportCorrectsUnobservedPrompt } from '../../../../orchestration/worker-report-admission'
+import type { OrchestrationDb } from '../../../../orchestration/db/orchestration-db'
+import type { OrchestrationPartyIdentity as OrchestrationCallerIdentity } from '../../../../../../shared/orchestration/mailbox/orchestration-party-identity'
+import type { DispatchContextRow } from '../../../../orchestration/db/orchestration-records'
+import { dispatchReportMailbox } from '../../../../orchestration/workers/reports/dispatch-report-mailbox'
+import { reportCorrectsUnobservedPrompt } from '../../../../orchestration/workers/reports/worker-report-admission'
 import { isDispatchAssignee } from '../../../../orchestration/db/dispatch-context/dispatch-lookup'
 import { OrchestrationError } from '../../../../orchestration/orchestration-error'
-import { isDispatchMutationMessageType } from '../schemas'
+import { isDispatchMutationMessageType } from '../../../../../../shared/rpc-contract/orchestration/orchestration-params'
 import type { MessageRouting } from '../routing'
 
 /** A terminal also proves its process, so a new process in the same pane is not taken for the old worker;
@@ -85,17 +85,30 @@ export function finishedWorkerSend<P extends { to?: string; type?: string }>(
   }
 }
 
-/** A finished worker on a paired host cannot reach its coordinator yet; say why instead of a bare refusal. */
+/** A finished worker on a paired host cannot reach its coordinator yet; say why instead of a bare refusal.
+ *  A worker since given local work is no longer that finished worker: its default mail goes to its
+ *  working Dispatch, so only mail naming the finished remote Dispatch is refused. */
 export function refuseFinishedRemoteWorker(
   db: OrchestrationDb,
-  paneKey: string | undefined,
+  sender: { address: string; paneKey: string | undefined },
   to: string | undefined
 ): void {
+  const { address, paneKey } = sender
   const attachment = paneKey ? db.findLatestRemoteAttachmentForPane(paneKey) : undefined
-  if (attachment && (!to || to === `dispatch:${attachment.dispatch_id}`)) {
-    throw new OrchestrationError(
-      'run_home_unreachable',
-      `Dispatch ${attachment.dispatch_id} has finished, and its coordinator runs on another computer that a finished worker cannot reach yet. Nothing was sent; give the message to the user instead.`
-    )
+  if (!attachment) {
+    return
   }
+  if (to === `dispatch:${attachment.dispatch_id}`) {
+    throw finishedRemoteUnreachable(attachment.dispatch_id)
+  }
+  if (!to && !db.getActiveDispatchForIdentity(address, paneKey)) {
+    throw finishedRemoteUnreachable(attachment.dispatch_id)
+  }
+}
+
+function finishedRemoteUnreachable(dispatchId: string): OrchestrationError {
+  return new OrchestrationError(
+    'run_home_unreachable',
+    `Dispatch ${dispatchId} has finished, and its coordinator runs on another computer that a finished worker cannot reach yet. Nothing was sent; give the message to the user instead.`
+  )
 }

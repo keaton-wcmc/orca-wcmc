@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { z } from 'zod'
-import { writeSecureJsonFile } from '../../shared/secure-file'
+import { writeSecureJsonFile } from '../../shared/secure-storage/secure-file'
 
 const guid = z
   .string()

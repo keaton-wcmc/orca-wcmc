@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Worktree } from '../../../../../../shared/worktree/types'
-import { cloneDefaultWorkspaceStatuses } from '../../../../../../shared/workspace-statuses'
+import { cloneDefaultWorkspaceStatuses } from '../../../../../../shared/workspace/status/workspace-statuses'
 import { getWorktreeHostIdentity } from '../../../../../../shared/worktree/host-qualified-identity'
 import { getWorkspacePriorityGroupKey } from '../../../../../../shared/workspace-priority'
 import { getWorkspaceBoardLaneUpdate, getWorkspaceBoardLaneIds } from './workspace-board-lanes'

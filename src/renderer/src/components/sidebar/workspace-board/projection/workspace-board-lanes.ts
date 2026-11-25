@@ -11,7 +11,7 @@ import {
   getWorkspacePriorityLabel,
   getWorkspacePriorityLaneIcon
 } from '../../../workspace-priority-icon'
-import { getWorkspaceStatus } from '../../../../../../shared/workspace-statuses'
+import { getWorkspaceStatus } from '../../../../../../shared/workspace/status/workspace-statuses'
 import { getWorkspaceStatusVisualMeta } from '../../workspace-status/presentation/workspace-status'
 
 // Why: a lane id names its own axis (priority ids carry the priority group prefix), so drop
@@ -81,9 +81,10 @@ export function getWorkspaceBoardLaneUpdate(
 }
 
 export function getWorkspaceBoardLaneVisualMeta(
-  lane: WorkspaceStatusDefinition
+  lane: WorkspaceStatusDefinition,
+  t?: Parameters<typeof getWorkspaceStatusVisualMeta>[1]
 ): ReturnType<typeof getWorkspaceStatusVisualMeta> {
-  const meta = getWorkspaceStatusVisualMeta(lane)
+  const meta = getWorkspaceStatusVisualMeta(lane, t)
   const priority = getWorkspacePriorityFromGroupKey(lane.id)
   return priority === undefined
     ? meta

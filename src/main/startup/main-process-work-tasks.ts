@@ -16,7 +16,7 @@ import { mainProcessState as state } from './main-process-state'
 /** Follow-ups live on the desktop app only; `orca serve` hosts skip them. */
 export function initializeMainProcessWorkTasks(): void {
   const store = state.store
-  const runtime = state.runtime
+  const runtime = state.core.runtime
   if (state.isServeMode || !store || !runtime) {
     return
   }

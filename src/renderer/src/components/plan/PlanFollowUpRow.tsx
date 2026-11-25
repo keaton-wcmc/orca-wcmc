@@ -14,8 +14,8 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { getIntlLocale, translate } from '@/i18n/i18n'
-import { activateAndRevealWorktree } from '@/lib/worktree-activation'
-import { cn } from '@/lib/utils'
+import { activateAndRevealWorktree } from '@/lib/workspace/activation/worktree-activation'
+import { cn } from '@/lib/class-names'
 
 const T = 'auto.components.plan.PlanFollowUpRow'
 

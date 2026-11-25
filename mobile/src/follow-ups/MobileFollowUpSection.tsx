@@ -7,9 +7,9 @@ import type { WorkTask } from '../../../src/shared/work-tasks/work-task-types'
 import { homeListStyles as styles } from '../home/home-list-styles'
 import { useMobileTranslation } from '../i18n/use-mobile-translation'
 import { useMobileColorScheme } from '../theme/use-mobile-color-scheme'
-import { useHostClient } from '../transport/host-client-hooks'
-import { hostStatusProbe } from '../transport/host-status-probe-operations'
-import type { HostProfile } from '../transport/types'
+import { useHostClient } from '../transport/connection/host-client-hooks'
+import { hostStatusProbe } from '../transport/connection/host-status-probe-operations'
+import type { HostProfile } from '../host-catalog/host-profile'
 import {
   followUpDoneWrite,
   followUpListRead,

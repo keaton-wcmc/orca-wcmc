@@ -1,7 +1,7 @@
 import type { WorkspacePriority } from '../../../shared/workspace-priority'
-import { WORKTREE_PRIORITY_RUNTIME_CAPABILITY } from '../../../shared/worktree-runtime-capabilities'
-import { assertRuntimeEnvironmentCapability } from './runtime-rpc-client'
-import type { RuntimeClientTarget } from '../../../shared/runtime-client-target'
+import { WORKTREE_PRIORITY_RUNTIME_CAPABILITY } from '../../../shared/remote-runtime/protocol/worktree-runtime-capabilities'
+import { assertRuntimeEnvironmentCapability } from './rpc/compatibility/runtime-capability-proof'
+import type { RuntimeClientTarget } from '../../../shared/remote-runtime/host-catalog/runtime-client-target'
 import { translate } from '@/i18n/i18n'
 
 /** Refuses a priority write (a clear included) that an older remote host would silently drop.

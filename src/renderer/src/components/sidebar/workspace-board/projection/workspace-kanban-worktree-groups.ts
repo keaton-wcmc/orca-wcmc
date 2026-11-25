@@ -3,11 +3,11 @@ import type {
   WorkspaceStatusDefinition,
   Worktree
 } from '../../../../../../shared/worktree/types'
-import type { SortBy } from '../../../../../../shared/sidebar-list/smart-sort'
+import type { WorkspaceSortBy as SortBy } from '../../../../../../shared/workspace-view/workspace-row-sort'
 import '../../workspace-status/presentation/workspace-status'
 import type { WorkspaceBoardColumns } from '../../../../../../shared/workspace-board-columns'
 import { compareWorkspacePriority } from '../../../../../../shared/workspace-priority'
-import { compareWorktreeDisplayName } from '@/lib/worktree-display-name-order'
+import { compareWorktreeDisplayName } from '../../../../../../shared/worktree/display-name-order'
 import { getWorktreeHostIdentity } from '../../../../../../shared/worktree/host-qualified-identity'
 import { getWorkspaceBoardLaneIds, getWorkspaceBoardLaneKey } from './workspace-board-lanes'
 

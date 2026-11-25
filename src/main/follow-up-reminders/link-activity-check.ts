@@ -1,5 +1,5 @@
-import { ghExecFileAsync } from '../git/command-runner/gh-exec-file'
-import { glabExecFileAsync } from '../git/command-runner/glab-exec-file'
+import { ghExecFileAsync } from '../git/command-runner/hosted-cli/gh-exec-file'
+import { glabExecFileAsync } from '../git/command-runner/hosted-cli/glab-exec-file'
 import type { WorkTaskLink } from '../../shared/work-tasks/work-task-types'
 
 export type LinkActivity = 'moved' | 'idle' | 'unknown'

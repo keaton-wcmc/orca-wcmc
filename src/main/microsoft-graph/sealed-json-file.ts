@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, rmSync } from 'node:fs'
 import type { ZodType } from 'zod'
 import { guardedSafeStorage } from '../host/safe-storage-availability'
-import { writeSecureFile } from '../../shared/secure-file'
+import { writeSecureFile } from '../../shared/secure-storage/secure-file'
 
 export type SecretCipher = Pick<
   typeof guardedSafeStorage,
